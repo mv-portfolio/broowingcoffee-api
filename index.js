@@ -26,9 +26,9 @@ mongoose.set('useUnifiedTopology', true);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
 mongoose.connect(CONN, (err) => {
-    if (err) return Log.show(err);
-    Log.show('Successfully Connected MongoDB');
-})
+  if (err) return Log.show(err);
+  Log.show('Successfully Connected MongoDB');
+});
 
 app.use(cors());
 app.use(express.json());
@@ -40,10 +40,10 @@ app.use(`/${SECRET_KEY1}/products`, primary_auth_decoder, products);
 app.use(`/${SECRET_KEY1}/add-ons`, primary_auth_decoder, addons);
 
 app.get('/', (req, res) => {
-    res.send("Welcome to Broowing Coffee Server");
-    Log.show(`/GET Welcome`);
-})
+  res.send('Welcome to Broowing Coffee Server');
+  Log.show(`/GET Welcome`);
+});
 
 app.listen(PORT, () => {
-    Log.show(`Listening PORT: ${PORT}`);
-})
+  Log.show(`Listening PORT: ${PORT}`);
+});
