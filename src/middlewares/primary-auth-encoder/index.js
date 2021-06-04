@@ -1,7 +1,6 @@
-require('dotenv').config();
 const Log = require('../../utility/Log');
 const Token = require('../../utility/Token');
-const SECRET_KEY1 = process.env.SECRET_KEY1;
+const { SECRET_KEY1 } = process.env;
 
 module.exports = (req, res, next) => {
   const CLIENT_SECRET_KEY = req.get('secret-key');
@@ -9,7 +8,7 @@ module.exports = (req, res, next) => {
     if (CLIENT_SECRET_KEY === SECRET_KEY1) {
       const primary_auth_token = Token.encode({ secret_key: CLIENT_SECRET_KEY }, SECRET_KEY1);
       res.json({ status: true, res: { primary_auth_token: primary_auth_token } }).status(200);
-      Log.show(`/POST/primary-authentication-encoder SUCCESS: new Active Application `);
+      Log.show(`/POST/primary-authentication-encoder SUCCESS: new Active Application`);
     } else {
       throw new Error('does not met the requirements');
     }

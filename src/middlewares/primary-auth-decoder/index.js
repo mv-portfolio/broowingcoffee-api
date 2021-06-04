@@ -1,7 +1,6 @@
-require('dotenv').config();
 const Log = require('../../utility/Log');
 const Token = require('../../utility/Token');
-const SECRET_KEY1 = process.env.SECRET_KEY1;
+const { SECRET_KEY1 } = process.env;
 
 module.exports = (req, res, next) => {
   const CLIENT_PRIMARY_TOKEN = req.get('primary-auth-token');

@@ -1,4 +1,3 @@
-require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 module.exports.encode = (payload, secret_key, config, func) => {

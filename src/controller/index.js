@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const Log = require('../utility/Log');
 const Thread = require('../utility/Thread');
 const Token = require('../utility/Token');
