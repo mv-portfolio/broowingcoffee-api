@@ -9,6 +9,7 @@ const path = require('path');
 const app = express();
 
 //middlewares
+const route_guard = require('./src/middlewares/route-guard');
 const primary_auth_encoder = require('./src/middlewares/primary-auth-encoder');
 const primary_auth_decoder = require('./src/middlewares/primary-auth-decoder');
 const signin_auth_encoder = require('./src/middlewares/signin-auth-encoder');
@@ -21,30 +22,43 @@ const users = require('./src/routes/users');
 const products = require('./src/routes/products');
 const addons = require('./src/routes/add-ons');
 
-const PORT = process.env.PORT;
-const CONN = process.env.CONN_LOCAL;
-const SECRET_KEY1 = process.env.SECRET_KEY1;
+const {PORT, CONN_LOCAL, SECRET_KEY1} = process.env;
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
-mongoose.connect(CONN, (err) => {
+mongoose.connect(CONN_LOCAL, (err) => {
   if (err) return Log.show(err);
   Log.show('Successfully Connected MongoDB');
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors());
 app.use(express.json());
-app.use(`/api/service/app-authentication`, primary_auth_encoder);
-app.use(`/api/service/signin-authentication-encoder`, primary_auth_decoder, signin_auth_encoder);
-app.use(`/api/service/signin-authentication-decoder`, primary_auth_decoder, signin_auth_decoder);
-app.use(`/api/service/user`, primary_auth_decoder, users);
-app.use(`/api/service/products`, primary_auth_decoder, products);
-app.use(`/api/service/add-ons`, primary_auth_decoder, addons);
-app.use(`/api/service/reset-password/`, primary_auth_decoder, reset_password_encoder);
+app.use(`/:secret_key1/api/service/app-authentication`, route_guard, primary_auth_encoder);
+app.use(
+  `/:secret_key1/api/service/signin-authentication-encoder`,
+  route_guard,
+  primary_auth_decoder,
+  signin_auth_encoder
+);
+app.use(
+  `/:secret_key1/api/service/signin-authentication-decoder`,
+  route_guard,
+  primary_auth_decoder,
+  signin_auth_decoder
+);
+app.use(`/:secret_key1/api/service/user`, route_guard, primary_auth_decoder, users);
+app.use(`/:secret_key1/api/service/products`, route_guard, primary_auth_decoder, products);
+app.use(`/:secret_key1/api/service/add-ons`, route_guard, primary_auth_decoder, addons);
+app.use(
+  `/:secret_key1/api/service/reset-password/`,
+  route_guard,
+  primary_auth_decoder,
+  reset_password_encoder
+);
 
 app.listen(PORT, () => {
   Log.show(`Listening PORT: ${PORT}`);
