@@ -5,6 +5,7 @@ const {SECRET_KEY2} = process.env;
 module.exports = (req, res, next) => {
   try {
     const primary_auth_token = Token.encode({message: 'welcome-hacker ☺'}, SECRET_KEY2);
+    Log.show(`/POST/primary-authentication-encoder SUCCESS: new Active Application`);
     res
       .json({
         status: true,
@@ -13,14 +14,13 @@ module.exports = (req, res, next) => {
         },
       })
       .status(200);
-    Log.show(`/POST/primary-authentication-encoder SUCCESS: new Active Application`);
   } catch (err) {
+    Log.show(`/POST/primary-authentication-encoder FAILED: ${err.message}`);
     res
       .json({
         status: false,
         err: err.message,
       })
       .status(400);
-    Log.show(`/POST/primary-authentication-encoder FAILED: ${err.message}`);
   }
 };

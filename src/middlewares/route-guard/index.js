@@ -6,16 +6,16 @@ module.exports = (req, res, next) => {
   try {
     if (secret_key1 === SECRET_KEY1) {
       Log.show(`/POST/route-guard SUCESS`);
-      next();
+      return next();
     }
     throw new Error('Sorry, This is Protected Route');
   } catch (err) {
+    Log.show(`/POST/route-guard FAILED: ${err.message}`);
     res
       .json({
         status: false,
         err: err.message,
       })
       .status(400);
-    Log.show(`/POST/route-guard FAILED: ${err.message}`);
   }
 };

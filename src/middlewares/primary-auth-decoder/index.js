@@ -8,10 +8,11 @@ module.exports = (req, res, next) => {
     const {secret_key} = Token.verify(CLIENT_PRIMARY_TOKEN, SECRET_KEY1);
     if (secret_key === SECRET_KEY1) {
       Log.show(`/POST/primary-authentication-decoder SUCCESS`);
-      next();
-    } else throw new Error('does not met the requirements');
+      return next();
+    }
+    throw new Error('does not met the requirements');
   } catch (err) {
-    res.json({status: false, err: err.message}).status(400);
     Log.show(`/POST/primary-authentication-decoder FAILED: ${err.message}`);
+    res.json({status: false, err: err.message}).status(400);
   }
 };

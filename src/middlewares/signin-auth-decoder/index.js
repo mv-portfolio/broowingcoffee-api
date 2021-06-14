@@ -9,16 +9,17 @@ const SECRET_KEY2 = process.env.SECRET_KEY2;
 module.exports = async (req, res, next) => {
   const secondary_auth_token = req.get('secondary-auth-token');
   try {
-    const { _id } = Token.verify(secondary_auth_token, SECRET_KEY2);
+    const {_id} = Token.verify(secondary_auth_token, SECRET_KEY2);
     Thread.onFindOne(
       Informations,
-      { _id: _id },
+      {_id: _id},
       {
         ref1: '_id_account',
         ref2: '_id_config',
       }
     )
       .then((user) => {
+        Log.show(`/POST/signin-authentication-decoder SUCCESS`);
         res
           .json({
             status: true,
@@ -27,13 +28,12 @@ module.exports = async (req, res, next) => {
             },
           })
           .status(200);
-        Log.show(`/POST/signin-authentication-decoder SUCCESS`);
       })
       .catch((err) => {
         throw new Error(err);
       });
   } catch (err) {
-    res.json({ status: false, err: err.message }).status(400);
     Log.show(`/POST/signin-authentication-decoder FAILED: ${err.message}`);
+    res.json({status: false, err: err.message}).status(400);
   }
 };
