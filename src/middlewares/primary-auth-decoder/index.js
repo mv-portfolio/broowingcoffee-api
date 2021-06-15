@@ -1,12 +1,13 @@
 const Log = require('../../utility/Log');
 const Token = require('../../utility/Token');
-const {SECRET_KEY1} = process.env;
+const {SECRET_KEY2} = process.env;
 
 module.exports = (req, res, next) => {
   const CLIENT_PRIMARY_TOKEN = req.get('primary-auth-token');
+  console.log('primary-auth-token', CLIENT_PRIMARY_TOKEN);
   try {
-    const {secret_key} = Token.verify(CLIENT_PRIMARY_TOKEN, SECRET_KEY1);
-    if (secret_key === SECRET_KEY1) {
+    const {message} = Token.verify(CLIENT_PRIMARY_TOKEN, SECRET_KEY2);
+    if (message === 'welcome-hacker ☺') {
       Log.show(`/POST/primary-authentication-decoder SUCCESS`);
       return next();
     }

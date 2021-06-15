@@ -4,7 +4,7 @@ const Thread = require('../../utility/Thread');
 const Accounts = require('../../schemas/users/accounts');
 const Informations = require('../../schemas/users/informations');
 
-const SECRET_KEY2 = process.env.SECRET_KEY2;
+const {SECRET_KEY2} = process.env;
 
 module.exports = async (req, res, next) => {
   const secondary_auth_token = req.get('secondary-auth-token');
@@ -16,9 +16,9 @@ module.exports = async (req, res, next) => {
       {
         ref1: '_id_account',
         ref2: '_id_config',
-      }
+      },
     )
-      .then((user) => {
+      .then(user => {
         Log.show(`/POST/signin-authentication-decoder SUCCESS`);
         res
           .json({
@@ -29,7 +29,7 @@ module.exports = async (req, res, next) => {
           })
           .status(200);
       })
-      .catch((err) => {
+      .catch(err => {
         throw new Error(err);
       });
   } catch (err) {
