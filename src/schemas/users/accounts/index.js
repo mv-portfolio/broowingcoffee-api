@@ -41,9 +41,9 @@ schema.statics.login = async function (username, password) {
     if (await bcrypt.compare(password, account.password)) {
       return account._id;
     }
-    throw new Error('Username and Password is incorrect.');
+    throw new Error('Username or Password is incorrect.');
   }
-  throw new Error('Username and Password is incorrect.');
+  throw new Error('Username or Password is incorrect.');
 };
 
 schema.pre('save', async function () {

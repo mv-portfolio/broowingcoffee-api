@@ -4,7 +4,7 @@ const {SECRET_KEY2} = process.env;
 
 module.exports = (req, res, next) => {
   const CLIENT_PRIMARY_TOKEN = req.get('primary-auth-token');
-  console.log('primary-auth-token', CLIENT_PRIMARY_TOKEN);
+  console.log(CLIENT_PRIMARY_TOKEN);
   try {
     const {message} = Token.verify(CLIENT_PRIMARY_TOKEN, SECRET_KEY2);
     if (message === 'welcome-hacker ☺') {
