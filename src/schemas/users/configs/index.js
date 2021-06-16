@@ -7,11 +7,11 @@ const schema = new Schema(
       type: Schema.Types.ObjectId,
       required: [true, 'Config has an empty id'],
     },
-    verified: {
+    isVerified: {
       type: Boolean,
       default: false,
     },
-    evaluated: {
+    isAssessed: {
       type: Boolean,
       default: false,
     },

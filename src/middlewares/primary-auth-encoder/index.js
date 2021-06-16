@@ -4,8 +4,16 @@ const {SECRET_KEY2} = process.env;
 
 module.exports = (req, res, next) => {
   try {
-    const primary_auth_token = Token.encode({message: 'welcome-hacker ☺'}, SECRET_KEY2);
-    Log.show(`/POST/primary-authentication-encoder SUCCESS: new Active Application`);
+    const primary_auth_token = Token.encode(
+      {message: 'welcome-hacker ☺'},
+      SECRET_KEY2,
+      {
+        expiresIn: 60 * 20,
+      },
+    );
+    Log.show(
+      `/POST/primary-authentication-encoder SUCCESS: new Active Application`,
+    );
     res
       .json({
         status: true,
