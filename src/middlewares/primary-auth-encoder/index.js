@@ -7,9 +7,9 @@ module.exports = (req, res, next) => {
     const primary_auth_token = Token.encode(
       {message: 'welcome-hacker ☺'},
       SECRET_KEY2,
-      {
-        expiresIn: 60 * 20,
-      },
+      // {
+      //   expiresIn: 60 * 20,
+      // },
     );
     Log.show(
       `/POST/primary-authentication-encoder SUCCESS: new Active Application`,
