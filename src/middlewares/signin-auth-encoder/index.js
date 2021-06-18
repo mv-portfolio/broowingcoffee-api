@@ -24,7 +24,7 @@ module.exports = async (req, res, next) => {
             {_id: user._id},
             SECRET_KEY2,
             {
-              expiresIn: 5,
+              expiresIn: 30,
             },
           );
           if (secondary_auth_token) {
