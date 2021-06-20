@@ -13,11 +13,13 @@ module.exports = async (req, res, next) => {
   try {
     const token = Token.encode({email}, SECRET_KEY1, {expiresIn: 60});
     const transporter = nodemailer.createTransport(mailerConfig);
-    const info = await transporter.sendMail(message(email, 'RESET PASSWORD', token));
+    const info = await transporter.sendMail(
+      message(email, 'RESET PASSWORD', token),
+    );
     Log.show(`/POST/reset-password SUCESS`);
-    res.json({status: true, res: isSent}).status(200);
+    res.json({status: true, res: info}).status(200);
   } catch (err) {
     Log.show(`/POST/reset-password FALED: ${err.message}`);
-    res.json({status: false, err: err}).status(400);
+    res.json({status: false, err: err.message}).status(400);
   }
 };
