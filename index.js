@@ -50,7 +50,7 @@ app.use(
   primary_auth_decoder,
   signin_auth_decoder
 );
-app.use(`/:secret_key1/api/service/user`, route_guard, primary_auth_decoder, users);
+app.use(`/:secret_key1/api/service/users`, route_guard, primary_auth_decoder, users);
 app.use(`/:secret_key1/api/service/products`, route_guard, primary_auth_decoder, products);
 app.use(`/:secret_key1/api/service/add-ons`, route_guard, primary_auth_decoder, addons);
 app.use(
