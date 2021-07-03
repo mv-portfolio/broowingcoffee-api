@@ -8,7 +8,7 @@ module.exports = (req, res, next) => {
       {message: 'welcome-hacker ☺'},
       SECRET_KEY2,
       // {
-      //   expiresIn: 60 * 20,
+      //   expiresIn: 60 * 30,
       // },
     );
     Log.show(

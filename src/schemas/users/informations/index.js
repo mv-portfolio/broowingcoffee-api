@@ -5,36 +5,36 @@ const schema = new Schema(
   {
     _id: {
       type: Schema.Types.ObjectId,
-      required: [true, 'Information has an empty id'],
+      required: [true, 'Information must not have an empty id'],
     },
     _id_account: {
       type: Schema.Types.ObjectId,
       ref: 'accounts',
-      required: [true, 'Information has an empty account'],
+      required: [true, 'Information must not have an empty account'],
     },
     _id_config: {
       type: Schema.Types.ObjectId,
       ref: 'configs',
-      required: [true, 'Information has an empty config'],
+      required: [true, 'Information must not have an empty config'],
     },
     firstname: {
       type: String,
       trim: true,
       lowercase: true,
       minlength: [2, 'Firstname must be valid name'],
-      required: [true, 'Information has an empty firstname'],
+      required: [true, 'Please provide your Firstname'],
     },
     lastname: {
       type: String,
       trim: true,
       lowercase: true,
       minlength: [2, 'Lastname must be valid name'],
-      required: [true, 'Information has an empty lastname'],
+      required: [true, 'Please provide your Lastname'],
     },
   },
   {
     collection: 'informations',
-  }
+  },
 );
 
 module.exports = mongoose.model('informations', schema);

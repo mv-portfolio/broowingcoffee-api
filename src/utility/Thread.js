@@ -1,20 +1,20 @@
-module.exports.onMultiThread = (threads) => {
+module.exports.onMultiThread = threads => {
   return Promise.all(
-    threads.map((thread) => {
+    threads.map(thread => {
       return thread
-        .then((data) => {
+        .then(data => {
           return {
             status: true,
             res: data,
           };
         })
-        .catch((err) => {
+        .catch(err => {
           return {
             status: false,
             err: err,
           };
         });
-    })
+    }),
   );
 };
 
@@ -23,12 +23,12 @@ module.exports.onCreate = (chunk, payload) => {
   return new Promise(async (res, rej) => {
     await chunk
       .create(payload)
-      .then((data) => res(data))
-      .catch((err) => rej(err));
+      .then(data => res(data))
+      .catch(err => rej(err));
   });
 };
 module.exports.onFind = (chunk, selector, refs) => {
-  let references = { ref1: '', ref2: '' };
+  let references = {ref1: '', ref2: ''};
   if (refs) {
     references = {
       ref1: refs.ref1,
@@ -47,7 +47,7 @@ module.exports.onFind = (chunk, selector, refs) => {
   });
 };
 module.exports.onFindOne = (chunk, selector, refs) => {
-  let references = { ref1: '', ref2: '' };
+  let references = {ref1: '', ref2: ''};
   if (refs) {
     references = {
       ref1: refs.ref1,
@@ -69,15 +69,15 @@ module.exports.onDelete = (chunk, selector) => {
   return new Promise(async (res, rej) => {
     await chunk
       .findByIdAndDelete(selector._id)
-      .then((data) => res(data))
-      .catch((err) => rej(err));
+      .then(data => res(data))
+      .catch(err => rej(err));
   });
 };
-module.exports.onUpdate = (chunk, selector, payload) => {
+module.exports.onUpdateOne = (chunk, selector, payload) => {
   return new Promise((res, rej) => {
     chunk
-      .findByIdAndUpdate(selector._id, payload)
-      .then((data) => res(data))
-      .catch((err) => rej(err));
+      .updateOne(selector, payload)
+      .then(data => res(data))
+      .catch(err => rej(err));
   });
 };

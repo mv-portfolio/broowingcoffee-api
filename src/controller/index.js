@@ -5,17 +5,15 @@ const mongoose = require('mongoose');
 const Informations = require('../schemas/users/informations');
 const Accounts = require('../schemas/users/accounts');
 const Configs = require('../schemas/users/configs');
-const Products = require('../schemas/products');
-const Addons = require('../schemas/add-ons');
-
-const SECRET_KEY2 = process.env.SECRET_KEY2;
+const Products = require('../schemas/products/main');
+const Addons = require('../schemas/products/add-ons');
 
 const onHandleError = err => {
   let message = '';
   let errors = {firstname: '', lastname: '', username: '', email: '', name: ''};
 
-  if (err.message.includes('validation failed')) {
-    Object.values(err.errors).map(({properties}) => {
+  if (err.message.includes('Validation failed')) {
+    Object.values(err.errors).forEach(({properties}) => {
       errors[properties.path] = properties.message;
     });
   }
@@ -27,16 +25,13 @@ const onHandleError = err => {
     if (err.message.includes('email')) {
       errors.email = 'Email is already in used.';
     }
-    if (err.message.includes('name')) {
-      errors.name = 'Name is already exist';
-    }
   }
 
   if (err.message.length !== 0) {
     message = err.message;
   }
 
-  Object.values(errors).map(error => {
+  Object.values(errors).forEach(error => {
     if (error) return (message = error);
   });
 
@@ -47,12 +42,12 @@ const onHandleError = err => {
 module.exports.peek_user = (req, res) => {
   Thread.onFind(Informations, null, {ref1: '_id_account', ref2: '_id_config'})
     .then(data => {
-      res.json({status: true, res: data}).status(200);
       Log.show(`/GET/user SUCCESS`);
+      res.json({status: true, res: data}).status(200);
     })
     .catch(err => {
-      res.json({status: false, err: err.message}).status(400);
       Log.show(`/GET/user FAILED: ${err.message}`);
+      res.json({status: false, err: err.message}).status(400);
     });
 };
 module.exports.push_user = (req, res) => {
@@ -79,10 +74,12 @@ module.exports.push_user = (req, res) => {
     Thread.onCreate(Configs, {_id: config_id}),
   ];
   Thread.onMultiThread(threads)
-    .then(data => {
+    .then(dataCreates => {
       let error = {status: false, err: ''};
-      data.map(data => {
-        if (!data.status) return (error = {status: true, err: data.err});
+      dataCreates.forEach(dataCreate => {
+        if (!dataCreate.status) {
+          return (error = {status: true, err: dataCreate.err});
+        }
       });
       if (error.status) {
         const threads = [
@@ -93,102 +90,87 @@ module.exports.push_user = (req, res) => {
         Thread.onMultiThread(threads);
 
         const handledError = onHandleError(error.err);
-        res.json({status: false, err: handledError}).status(400);
         Log.show(`/POST/user FAILED: ${handledError}`);
+        res.json({status: false, err: handledError}).status(400);
       } else {
-        res.json({status: true, res: {user_id: information_id}}).status(200);
         Log.show(`/POST/user SUCCESS: new created user "${username}"`);
+        res.json({status: true, res: {user_id: information_id}}).status(200);
       }
     })
     .catch(err => {
       const handledError = onHandleError(err);
-      res.json({status: false, err: handledError}).status(400);
       Log.show(`/POST/user FAILED: ${handledError}`);
+      res.json({status: false, err: handledError}).status(400);
     });
 };
 module.exports.set_user = (req, res) => {
   const {_id, firstname, lastname, username, email, password} = req.body;
-  const {information_id, account_id, config_id} = {
-    information_id: new mongoose.Types.ObjectId(),
-    account_id: new mongoose.Types.ObjectId(),
-    config_id: new mongoose.Types.ObjectId(),
-  };
-  const threads = [
-    Thread.onCreate(Informations, {
-      _id: information_id,
-      _id_account: account_id,
-      _id_config: config_id,
-      firstname: firstname,
-      lastname: lastname,
-    }),
-    Thread.onCreate(Accounts, {
-      _id: account_id,
-      username: username,
-      email: email,
-      password: password,
-    }),
-    Thread.onCreate(Configs, {
-      _id: config_id,
-    }),
-    Thread.onFindOne(Informations, {_id: _id}),
-  ];
-  Thread.onMultiThread(threads)
+  Thread.onFindOne(
+    Informations,
+    {_id: _id},
+    {ref1: '_id_account', ref2: '_id_config'},
+  )
     .then(data => {
-      let error = {status: false, err: ''};
-      data.map(data => {
-        if (!data.status) return (error = {status: true, err: data.err});
-      });
-      if (error.status) {
-        const threads = [
-          Thread.onDelete(Informations, information_id),
-          Thread.onDelete(Accounts, account_id),
-          Thread.onDelete(Configs, config_id),
-        ];
-        Thread.onMultiThread(threads);
-        const handledError = onHandleError(error.err);
-        res.json({status: false, err: handledError}).status(400);
-        Log.show(`/UPDATE/user FAILED: ${handledError}`);
-      } else {
-        const user = data[3].res;
-        const threads = [
-          Thread.onDelete(Informations, user._id),
-          Thread.onDelete(Accounts, user._id_account),
-          Thread.onDelete(Configs, user._id_config),
-          Thread.onUpdate(Configs, {_id: config_id}, {evaluated: true}),
-        ];
-        Thread.onMultiThread(threads);
-        Thread.onFindOne(
+      const account = data._id_account;
+      const config = data._id_config;
+
+      const threads = [
+        Thread.onUpdateOne(
           Informations,
-          {_id: information_id},
+          {_id: _id},
           {
-            ref1: '_id_account',
-            ref2: '_id_config',
+            firstname,
+            lastname,
           },
-        ).then(user => {
-          const secondary_auth_token = Token.encode(
-            {_id: information_id},
-            SECRET_KEY2,
-            {
-              expiresIn: 60 * 60 * 24,
-            },
-          );
-          res
-            .json({
-              status: true,
-              res: {
-                user: user,
-                secondary_auth_token: secondary_auth_token,
-              },
-            })
-            .status(200);
-          Log.show(`/POST/user SUCCESS: new updated user "${username}"`);
+        ),
+        Thread.onUpdateOne(
+          Accounts,
+          {_id: account._id},
+          {
+            username,
+            email,
+            password,
+          },
+        ),
+        Thread.onUpdateOne(Configs, {_id: config._id}, {isAssessed: true}),
+      ];
+
+      Thread.onMultiThread(threads).then(dataUpdates => {
+        let error = {status: false, err: ''};
+        dataUpdates.forEach(dataUpdate => {
+          if (!dataUpdate.status) {
+            error = {status: true, err: dataUpdate.err};
+          }
         });
-      }
+
+        if (error.status) {
+          const threads = [
+            Thread.onUpdateOne(
+              Informations,
+              {_id: _id},
+              {firstname: data.firstname, lastname: data.lastname},
+            ),
+            Thread.onUpdateOne(
+              Accounts,
+              {_id: account._id},
+              {
+                username: account.username,
+                email: account.email,
+                password: account.password,
+              },
+            ),
+            Thread.onUpdateOne(Configs, {_id: config._id}, {isAssessed: false}),
+          ];
+          Thread.onMultiThread(threads);
+          const errorHandler = onHandleError(error.err);
+          res.json({status: false, err: errorHandler}).status(400);
+        } else {
+          res.json({status: true, res: {user_id: _id}}).status(400);
+        }
+      });
     })
     .catch(err => {
-      const handledError = onHandleError(err);
-      res.json({status: false, err: handledError}).status(400);
-      Log.show(`/UPDATE/user FAILED: ${handledError}`);
+      res.json({status: false, err: err}).status(400);
     });
 };
 
@@ -196,13 +178,13 @@ module.exports.set_user = (req, res) => {
 module.exports.peek_products = (req, res) => {
   Thread.onFind(Products, null, null)
     .then(data => {
-      res.json({status: true, res: data}).status(200);
       Log.show(`/GET/products SUCCESS`);
+      res.json({status: true, res: data}).status(200);
     })
     .catch(err => {
       const errors = onHandleError(err);
-      res.json({status: false, err: errors}).status(400);
       Log.show(`/GET/products FAILED: ${errors}`);
+      res.json({status: false, err: errors}).status(400);
     });
 };
 module.exports.push_products = (req, res) => {
@@ -215,18 +197,18 @@ module.exports.push_products = (req, res) => {
     date_modified: date_modified,
   })
     .then(data => {
-      res.json({status: true, res: data}).status(200);
       Log.show(`/POST/products SUCCESS: new created product "${name}"`);
+      res.json({status: true, res: data}).status(200);
     })
     .catch(err => {
       const errors = onHandleError(err);
-      res.json({status: false, err: errors}).status(400);
       Log.show(`/POST/products FAILED: ${errors}`);
+      res.json({status: false, err: errors}).status(400);
     });
 };
 module.exports.set_products = (req, res) => {
   const {_id, name, based, hot_price, cold_price, date_modified} = req.body;
-  Thread.onUpdate(
+  Thread.onUpdateOne(
     Products,
     {_id: _id},
     {
@@ -238,26 +220,26 @@ module.exports.set_products = (req, res) => {
     },
   )
     .then(data => {
-      res.json({status: true, res: data}).status(200);
       Log.show(`/POST/products SUCCESS: updated product "${name}"`);
+      res.json({status: true, res: data}).status(200);
     })
     .catch(err => {
       const handledError = onHandleError(err);
-      res.json({status: false, err: handledError}).status(400);
       Log.show(`/UPDATE/products FAILED: ${handledError}`);
+      res.json({status: false, err: handledError}).status(400);
     });
 };
 module.exports.pop_products = (req, res) => {
   const {_id, name} = req.body;
   Thread.onDelete(Products, {_id: mongoose.Types.ObjectId(_id)})
     .then(data => {
-      res.json({status: true, res: data}).status(200);
       Log.show(`/GET/products SUCCESS: product deleted "${name}"`);
+      res.json({status: true, res: data}).status(200);
     })
     .catch(err => {
       const errors = onHandleError(err);
-      res.json({status: false, err: errors}).status(400);
       Log.show(`/GET/products FAILED: ${errors}`);
+      res.json({status: false, err: errors}).status(400);
     });
 };
 
@@ -265,13 +247,13 @@ module.exports.pop_products = (req, res) => {
 module.exports.peek_add_ons = (req, res) => {
   Thread.onFind(Addons, null, null)
     .then(data => {
-      res.json({status: true, res: data}).status(200);
       Log.show(`/GET/add-ons SUCCESS`);
+      res.json({status: true, res: data}).status(200);
     })
     .catch(err => {
       const errors = onHandleError(err);
-      res.json({status: false, err: errors}).status(400);
       Log.show(`/GET/add-ons FAILED: ${errors}`);
+      res.json({status: false, err: errors}).status(400);
     });
 };
 module.exports.push_add_ons = (req, res) => {
@@ -282,18 +264,18 @@ module.exports.push_add_ons = (req, res) => {
     date_modified: date_modified,
   })
     .then(data => {
-      res.json({status: true, res: data}).status(200);
       Log.show(`/POST/add-ons SUCCESS: new created add-ons "${name}"`);
+      res.json({status: true, res: data}).status(200);
     })
     .catch(err => {
       const errors = onHandleError(err);
-      res.json({status: false, err: errors}).status(400);
       Log.show(`/POST/add-ons FAILED: ${errors}`);
+      res.json({status: false, err: errors}).status(400);
     });
 };
 module.exports.set_add_ons = (req, res) => {
   const {_id, name, price, date_modified} = req.body;
-  Thread.onUpdate(
+  Thread.onUpdateOne(
     Addons,
     {_id: _id},
     {
@@ -303,25 +285,25 @@ module.exports.set_add_ons = (req, res) => {
     },
   )
     .then(data => {
-      res.json({status: true, res: data}).status(200);
       Log.show(`/POST/add-ons SUCCESS: updated add-on "${name}"`);
+      res.json({status: true, res: data}).status(200);
     })
     .catch(err => {
       const handledError = onHandleError(err);
-      res.json({status: false, err: handledError}).status(400);
       Log.show(`/UPDATE/add-ons FAILED: ${handledError}`);
+      res.json({status: false, err: handledError}).status(400);
     });
 };
 module.exports.pop_add_ons = (req, res) => {
   const {_id, name} = req.body;
   Thread.onDelete(Addons, {_id: _id})
     .then(data => {
-      res.json({status: true, res: data}).status(200);
       Log.show(`/GET/add-ons SUCCESS: add-on deleted "${name}"`);
+      res.json({status: true, res: data}).status(200);
     })
     .catch(err => {
       const errors = onHandleError(err);
-      res.json({status: false, err: errors}).status(400);
       Log.show(`/GET/add-ons FAILED: ${errors}`);
+      res.json({status: false, err: errors}).status(400);
     });
 };

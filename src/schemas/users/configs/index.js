@@ -5,7 +5,7 @@ const schema = new Schema(
   {
     _id: {
       type: Schema.Types.ObjectId,
-      required: [true, 'Config has an empty id'],
+      required: [true, 'Config must not have an empty id'],
     },
     isVerified: {
       type: Boolean,
@@ -18,7 +18,7 @@ const schema = new Schema(
   },
   {
     collection: 'configs',
-  }
+  },
 );
 
 module.exports = mongoose.model('configs', schema);
