@@ -7,28 +7,21 @@ module.exports = (req, res, next) => {
     const primary_auth_token = Token.encode(
       {message: 'welcome-hacker ☺'},
       SECRET_KEY2,
-      // {
-      //   expiresIn: 60 * 30,
-      // },
     );
     Log.show(
       `/POST/primary-authentication-encoder SUCCESS: new Active Application`,
     );
-    res
-      .json({
-        status: true,
-        res: {
-          primary_auth_token: primary_auth_token,
-        },
-      })
-      .status(200);
+    res.status(200).json({
+      status: true,
+      res: {
+        primary_auth_token: primary_auth_token,
+      },
+    });
   } catch (err) {
     Log.show(`/POST/primary-authentication-encoder FAILED: ${err.message}`);
-    res
-      .json({
-        status: false,
-        err: err.message,
-      })
-      .status(400);
+    res.status(400).json({
+      status: false,
+      err: err.message,
+    });
   }
 };

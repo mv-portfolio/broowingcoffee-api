@@ -23,23 +23,21 @@ module.exports = async (req, res, next) => {
           const secondary_auth_token = Token.encode(
             {_id: user._id},
             SECRET_KEY2,
-            // {
-            //   expiresIn: 60 * 30,
-            // },
+            {
+              expiresIn: 60 * 10,
+            },
           );
           if (secondary_auth_token) {
-            res
-              .json({
-                status: true,
-                res: {
-                  user: user,
-                  secondary_auth_token: secondary_auth_token,
-                },
-              })
-              .status(200);
             Log.show(
               `/POST/signin-authentication-encoder SUCCESS: ${username} has been login`,
             );
+            res.status(200).json({
+              status: true,
+              res: {
+                user: user,
+                secondary_auth_token: secondary_auth_token,
+              },
+            });
           }
         })
         .catch(err => {
@@ -49,7 +47,7 @@ module.exports = async (req, res, next) => {
       throw new Error('Username or Password is incorrect');
     }
   } catch (err) {
-    res.json({status: false, err: err.message}).status(400);
+    res.status(400).json({status: false, err: err.message});
     Log.show(`/POST/signin-authentication-encoder FAILED: ${err.message}`);
   }
 };

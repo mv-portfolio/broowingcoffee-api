@@ -19,21 +19,27 @@ module.exports = async (req, res, next) => {
       },
     )
       .then(user => {
-        Log.show(`/POST/signin-authentication-decoder SUCCESS`);
-        res
-          .json({
-            status: true,
+        if (!user) {
+          res.status(401).json({
+            status: false,
             res: {
-              user: user,
+              user: 'User does not exist',
             },
-          })
-          .status(200);
+          });
+        }
+        Log.show(`/POST/signin-authentication-decoder SUCCESS`);
+        res.status(200).json({
+          status: true,
+          res: {
+            user: user,
+          },
+        });
       })
       .catch(err => {
         throw new Error(err);
       });
   } catch (err) {
-    Log.show(`/POST/signin-authentication-decoder FAILED: ${err.message}`);
-    res.json({status: false, err: err.message}).status(400);
+    Log.show(`/POST/signin-authentication-decoder FAILED`);
+    res.status(401).json({status: false, err: err.message});
   }
 };

@@ -17,9 +17,9 @@ module.exports = async (req, res, next) => {
       message(email, 'RESET PASSWORD', token),
     );
     Log.show(`/POST/reset-password SUCESS`);
-    res.json({status: true, res: info}).status(200);
+    res.status(200).json({status: true, res: info});
   } catch (err) {
     Log.show(`/POST/reset-password FALED: ${err.message}`);
-    res.json({status: false, err: err.message}).status(400);
+    res.status(400).json({status: false, err: err.message});
   }
 };

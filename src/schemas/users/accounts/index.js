@@ -15,19 +15,19 @@ const schema = new Schema(
       lowercase: true,
       minlength: [5, 'Username must be valid'],
       unique: [true, 'Username is already exist'],
-      required: [true, 'Please provide a username'],
+      required: [true, 'Please provide a Username'],
     },
     email: {
       type: String,
       trim: true,
       lowercase: true,
-      validate: [isEmail, 'Please enter a valid email'],
+      validate: [isEmail, 'Please enter a valid Email'],
       unique: [true, 'Email is already exist'],
-      required: [true, 'Please provide your email address'],
+      required: [true, 'Please provide your Email Address'],
     },
     password: {
       type: String,
-      required: [true, 'Please provide your password'],
+      required: [true, 'Please provide your Password'],
     },
   },
   {

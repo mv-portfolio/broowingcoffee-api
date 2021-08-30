@@ -12,11 +12,9 @@ module.exports = (req, res, next) => {
     throw new Error('Sorry, you are unauthorized user.');
   } catch (err) {
     Log.show(`/POST/auth-guard FAILED: ${err.message}`);
-    res
-      .json({
-        status: false,
-        err: err.message,
-      })
-      .status(400);
+    res.status(401).json({
+      status: false,
+      err: err.message,
+    });
   }
 };

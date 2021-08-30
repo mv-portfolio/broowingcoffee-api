@@ -11,11 +11,9 @@ module.exports = (req, res, next) => {
     throw new Error('Sorry, This is Protected Route');
   } catch (err) {
     Log.show(`/POST/route-guard FAILED: ${err.message}`);
-    res
-      .json({
-        status: false,
-        err: err.message,
-      })
-      .status(400);
+    res.status(403).json({
+      status: false,
+      err: err.message,
+    });
   }
 };
