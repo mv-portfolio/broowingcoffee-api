@@ -26,12 +26,12 @@ const schema = new Schema(
     },
     date_modified: {
       type: Number,
-      required: [true, 'Product has an empty date'],
+      default: new Date().getTime(),
     },
   },
   {
     collection: 'products',
-  }
+  },
 );
 
 module.exports = mongoose.model('products', schema);

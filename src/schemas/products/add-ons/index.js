@@ -17,12 +17,12 @@ const schema = new Schema(
     },
     date_modified: {
       type: Number,
-      required: [true, 'Product has an empty date'],
+      default: new Date().getTime(),
     },
   },
   {
     collection: 'add_ons',
-  }
+  },
 );
 
 module.exports = mongoose.model('add_ons', schema);
