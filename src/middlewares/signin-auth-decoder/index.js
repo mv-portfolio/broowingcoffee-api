@@ -26,6 +26,7 @@ module.exports = async (req, res, next) => {
               user: 'User does not exist',
             },
           });
+          return;
         }
         Log.show(`/POST/signin-authentication-decoder SUCCESS`);
         res.status(200).json({

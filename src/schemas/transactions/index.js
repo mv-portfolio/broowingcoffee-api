@@ -1,0 +1,35 @@
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const schema = new Schema(
+  {
+    date_created: {
+      type: Number,
+      default: new Date().getTime(),
+    },
+    discount: {
+      type: Number,
+    },
+    products: [
+      {
+        _id_product: {
+          type: Schema.Types.ObjectId,
+          ref: 'products',
+          required: [true, 'transaction must specify the product id'],
+        },
+        type: {
+          type: String,
+          required: [true, 'transaction must specify the product type'],
+        },
+        discount: {
+          type: Number,
+        },
+      },
+    ],
+  },
+  {
+    collection: 'transaction',
+  },
+);
+
+module.exports = mongoose.model('transaction', schema);

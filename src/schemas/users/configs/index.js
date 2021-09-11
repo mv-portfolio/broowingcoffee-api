@@ -15,6 +15,10 @@ const schema = new Schema(
       type: Boolean,
       default: false,
     },
+    date_created: {
+      type: Number,
+      default: new Date().getTime(),
+    },
   },
   {
     collection: 'configs',

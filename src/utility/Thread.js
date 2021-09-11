@@ -68,7 +68,7 @@ module.exports.onFindOne = (chunk, selector, refs) => {
 module.exports.onDelete = (chunk, selector) => {
   return new Promise(async (res, rej) => {
     await chunk
-      .findByIdAndDelete(selector._id)
+      .deleteOne(selector)
       .then(data => res(data))
       .catch(err => rej(err));
   });

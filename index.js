@@ -22,6 +22,7 @@ const reset_password_decoder = require('./src/middlewares/reset-password-decoder
 const users = require('./src/routes/users');
 const products = require('./src/routes/products/main');
 const addons = require('./src/routes/products/add-ons');
+const transactions = require('./src/routes/transaction');
 
 const {PORT, CONN_LOCAL} = process.env;
 
@@ -82,6 +83,12 @@ app.use(
   route_guard,
   primary_auth_decoder,
   reset_password_encoder,
+);
+app.use(
+  `/:secret_key1/api/service/transactions`,
+  route_guard,
+  primary_auth_decoder,
+  transactions,
 );
 
 app.listen(PORT, () => {

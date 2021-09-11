@@ -26,6 +26,9 @@ const onHandleError = err => {
     if (err.message.includes('email')) {
       errors.email = 'Email is already in used.';
     }
+    if (err.message.includes('name')) {
+      errors.name = 'Name is already exist';
+    }
   }
 
   if (err.message.length !== 0) {
@@ -36,6 +39,7 @@ const onHandleError = err => {
     if (error) return (message = error);
   });
 
+  console.log('ERROR-HANDLER', message);
   return message;
 };
 
@@ -84,9 +88,9 @@ module.exports.push_user = (req, res) => {
       });
       if (error.status) {
         const threads = [
-          Thread.onDelete(Informations, information_id),
-          Thread.onDelete(Accounts, account_id),
-          Thread.onDelete(Configs, config_id),
+          Thread.onDelete(Informations, {_id: information_id}),
+          Thread.onDelete(Accounts, {_id: account_id}),
+          Thread.onDelete(Configs, {_id: config_id}),
         ];
         Thread.onMultiThread(threads);
 
@@ -195,6 +199,49 @@ module.exports.set_user = (req, res) => {
       res.status(470).json({status: false, err: err});
     });
 };
+module.exports.pop_user = (req, res) => {
+  const {_id} = req.body;
+
+  Thread.onFindOne(
+    Informations,
+    {_id},
+    {ref1: '_id_account', ref2: '_id_config'},
+  ).then(data => {
+    if (!data) {
+      res.status(400).json({status: false, err: 'User not found'});
+      return;
+    }
+
+    const {_id_account, _id_config} = data;
+
+    const threads = [
+      Thread.onDelete(Informations, {_id}),
+      Thread.onDelete(Accounts, {_id: _id_account}),
+      Thread.onDelete(Configs, {_id: _id_config}),
+    ];
+
+    Thread.onMultiThread(threads).then(data => {
+      let error = {status: false};
+      data.forEach(({status}) => {
+        if (!status) error.status = true;
+      });
+
+      if (error.status) {
+        res.status(400).json({status: false});
+        return;
+      }
+      res.status(200).json({status: true});
+    });
+  });
+};
+
+module.exports.get_transaction = (req, res) => {
+  res.json('HELLO WORLD');
+};
+
+module.exports.push_transaction = (req, res) => {
+  res.json('HELLO WORLD');
+};
 
 //products
 module.exports.peek_products = (req, res) => {
@@ -211,6 +258,7 @@ module.exports.peek_products = (req, res) => {
 };
 module.exports.push_products = (req, res) => {
   const {name, based, hot_price, cold_price, date_modified} = req.body;
+
   Thread.onCreate(Products, {
     name: name,
     based: based,
@@ -230,15 +278,16 @@ module.exports.push_products = (req, res) => {
 };
 module.exports.set_products = (req, res) => {
   const {_id, name, based, hot_price, cold_price, date_modified} = req.body;
+
   Thread.onUpdateOne(
     Products,
-    {_id: _id},
+    {name: name},
     {
-      name: name,
-      based: based,
-      hot_price: hot_price,
-      cold_price: cold_price,
-      date_modified: date_modified,
+      name,
+      based,
+      hot_price,
+      cold_price,
+      date_modified,
     },
   )
     .then(data => {
@@ -252,10 +301,10 @@ module.exports.set_products = (req, res) => {
     });
 };
 module.exports.pop_products = (req, res) => {
-  const {_id, name} = req.body;
-  Thread.onDelete(Products, {_id: mongoose.Types.ObjectId(_id)})
+  const {name} = req.body;
+  Thread.onDelete(Products, {name})
     .then(data => {
-      Log.show(`/GET/products SUCCESS: product deleted "${name}"`);
+      Log.show(`/GET/products SUCCESS: products/main deleted "${name}"`);
       res.status(200).json({status: true, res: data});
     })
     .catch(err => {
@@ -280,11 +329,7 @@ module.exports.peek_add_ons = (req, res) => {
 };
 module.exports.push_add_ons = (req, res) => {
   const {name, price, date_modified} = req.body;
-  Thread.onCreate(Addons, {
-    name: name,
-    price: price,
-    date_modified: date_modified,
-  })
+  Thread.onCreate(Addons, {name, price, date_modified})
     .then(data => {
       Log.show(`/POST/add-ons SUCCESS: new created add-ons "${name}"`);
       res.status(200).json({status: true, res: data});
@@ -297,15 +342,7 @@ module.exports.push_add_ons = (req, res) => {
 };
 module.exports.set_add_ons = (req, res) => {
   const {_id, name, price, date_modified} = req.body;
-  Thread.onUpdateOne(
-    Addons,
-    {_id: _id},
-    {
-      name: name,
-      price: price,
-      date_modified: date_modified,
-    },
-  )
+  Thread.onUpdateOne(Addons, {name}, {name, price, date_modified})
     .then(data => {
       Log.show(`/POST/add-ons SUCCESS: updated add-on "${name}"`);
       res.status(200).json({status: true, res: data});
@@ -317,15 +354,15 @@ module.exports.set_add_ons = (req, res) => {
     });
 };
 module.exports.pop_add_ons = (req, res) => {
-  const {_id, name} = req.body;
-  Thread.onDelete(Addons, {_id: _id})
+  const {name} = req.body;
+  Thread.onDelete(Addons, {name})
     .then(data => {
-      Log.show(`/GET/add-ons SUCCESS: add-on deleted "${name}"`);
+      Log.show(`/GET/products SUCCESS: products/addons deleted "${name}"`);
       res.status(200).json({status: true, res: data});
     })
     .catch(err => {
       const errors = onHandleError(err);
-      Log.show(`/GET/add-ons FAILED: ${errors}`);
+      Log.show(`/GET/products FAILED: ${errors}`);
       res.status(400).json({status: false, err: errors});
     });
 };

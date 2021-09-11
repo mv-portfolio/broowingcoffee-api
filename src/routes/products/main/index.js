@@ -8,7 +8,7 @@ const {
 
 router.get('/', peek_products);
 router.post('/push', push_products);
-router.post('/set', set_products);
-router.post('/pop', pop_products);
+router.put('/set', set_products);
+router.delete('/pop', pop_products);
 
 module.exports = router;
