@@ -8,6 +8,8 @@ const Accounts = require('../schemas/users/accounts');
 const Configs = require('../schemas/users/configs');
 const Products = require('../schemas/products/main');
 const Addons = require('../schemas/products/add-ons');
+const Transactions = require('../schemas/transactions');
+const Inventory = require('../schemas/inventory');
 
 const onHandleError = err => {
   let message = '';
@@ -39,7 +41,6 @@ const onHandleError = err => {
     if (error) return (message = error);
   });
 
-  console.log('ERROR-HANDLER', message);
   return message;
 };
 
@@ -235,12 +236,32 @@ module.exports.pop_user = (req, res) => {
   });
 };
 
-module.exports.get_transaction = (req, res) => {
-  res.json('HELLO WORLD');
+//transactions
+module.exports.peek_transactions = (req, res) => {
+  Thread.onFind(Transactions, null, {ref1: 'products._id_product'})
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(err => {
+      res.status(400).json(err);
+    });
 };
-
 module.exports.push_transaction = (req, res) => {
-  res.json('HELLO WORLD');
+  const {receiptTo, discount, products, date_created} = req.body;
+  console.log({receiptTo, discount, products, date_created});
+  Thread.onCreate(Transactions, {
+    receiptTo,
+    discount,
+    products,
+    date_created,
+  })
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(400).json(err);
+    });
 };
 
 //products
@@ -363,6 +384,79 @@ module.exports.pop_add_ons = (req, res) => {
     .catch(err => {
       const errors = onHandleError(err);
       Log.show(`/GET/products FAILED: ${errors}`);
+      res.status(400).json({status: false, err: errors});
+    });
+};
+
+//inventory
+module.exports.peek_inventory = (req, res) => {
+  Thread.onFind(Inventory, null, null)
+    .then(data => {
+      Log.show(`/GET/inventory SUCCESS`);
+      res.status(200).json({status: true, res: data});
+    })
+    .catch(err => {
+      const errors = onHandleError(err);
+      Log.show(`/GET/inventory FAILED: ${errors}`);
+      res.status(400).json({status: false, err: errors});
+    });
+};
+module.exports.push_inventory = (req, res) => {
+  const {name, cost, itemType, quantity, date_expired, date_modified} =
+    req.body;
+  Thread.onCreate(Inventory, {
+    name,
+    cost,
+    type: itemType,
+    quantity,
+    date_expired,
+    date_modified,
+  })
+    .then(data => {
+      Log.show(`/POST/inventory SUCCESS: new created item "${name}"`);
+      res.status(200).json({status: true, res: data});
+    })
+    .catch(err => {
+      const errors = onHandleError(err);
+      Log.show(`/POST/inventory FAILED: ${errors}`);
+      res.status(400).json({status: false, err: errors});
+    });
+};
+module.exports.set_inventory = (req, res) => {
+  const {name, cost, itemType, quantity, date_expired, date_modified} =
+    req.body;
+  Thread.onUpdateOne(
+    Inventory,
+    {name},
+    {
+      name,
+      cost,
+      type: itemType,
+      quantity,
+      date_expired,
+      date_modified,
+    },
+  )
+    .then(data => {
+      Log.show(`/UPDATE/inventory SUCCESS: updated add-on "${name}"`);
+      res.status(200).json({status: true, res: data});
+    })
+    .catch(err => {
+      const handledError = onHandleError(err);
+      Log.show(`/UPDATE/inventory FAILED: ${handledError}`);
+      res.status(400).json({status: false, err: handledError});
+    });
+};
+module.exports.pop_inventory = (req, res) => {
+  const {name} = req.body;
+  Thread.onDelete(Inventory, {name})
+    .then(data => {
+      Log.show(`/DELETE/inventory SUCCESS: deleted "${name}"`);
+      res.status(200).json({status: true, res: data});
+    })
+    .catch(err => {
+      const errors = onHandleError(err);
+      Log.show(`/DELETE/inventory FAILED: ${errors}`);
       res.status(400).json({status: false, err: errors});
     });
 };

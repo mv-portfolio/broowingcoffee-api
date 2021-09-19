@@ -23,6 +23,7 @@ const users = require('./src/routes/users');
 const products = require('./src/routes/products/main');
 const addons = require('./src/routes/products/add-ons');
 const transactions = require('./src/routes/transaction');
+const inventory = require('./src/routes/inventory');
 
 const {PORT, CONN_LOCAL} = process.env;
 
@@ -89,6 +90,12 @@ app.use(
   route_guard,
   primary_auth_decoder,
   transactions,
+);
+app.use(
+  `/:secret_key1/api/service/inventory`,
+  route_guard,
+  primary_auth_decoder,
+  inventory,
 );
 
 app.listen(PORT, () => {

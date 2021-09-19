@@ -9,9 +9,15 @@ const schema = new Schema(
     },
     discount: {
       type: Number,
+      default: 0,
+    },
+    receiptTo: {
+      type: String,
+      default: null,
     },
     products: [
       {
+        _id: false,
         _id_product: {
           type: Schema.Types.ObjectId,
           ref: 'products',
@@ -23,6 +29,11 @@ const schema = new Schema(
         },
         discount: {
           type: Number,
+          default: 0,
+        },
+        price: {
+          type: Number,
+          required: [true, 'transaction must specify the product price'],
         },
       },
     ],

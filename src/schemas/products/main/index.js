@@ -28,6 +28,18 @@ const schema = new Schema(
       type: Number,
       default: new Date().getTime(),
     },
+    inventory: [
+      {
+        _id_item: {
+          type: Schema.Types.ObjectId,
+          ref: 'inventory',
+        },
+        consumed: {
+          type: Number,
+          required: [true, 'Product must have consumed quantity on inventory'],
+        },
+      },
+    ],
   },
   {
     collection: 'products',

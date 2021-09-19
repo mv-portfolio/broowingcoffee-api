@@ -12,42 +12,31 @@ const schema = new Schema(
       required: [true, 'Item has an empty name'],
     },
     type: {
+      //material or ingredients
       type: String,
       lowercase: true,
       required: [true, 'Item has an empty type'],
     },
-    stock: {
+    quantity: {
       type: Number,
-      required: [true, 'Item has invalid number of stocks'],
+      required: [true, 'Item has invalid number of quantity'],
     },
-    amount: {
+    cost: {
       type: Number,
-      required: [true, 'Item has an empty amount'],
-    },
-    supplier: {
-      type: String,
-      lowercase: true,
-      minlength: [2, 'Item has invalid supplier'],
-      required: [true, 'Item has an empty supplier'],
-    },
-    category: {
-      type: String,
-      lowercase: true,
-      minlength: [2, 'Item has invalid category'],
-      required: [true, 'Item has an empty category'],
+      required: [true, 'Item has invalid cost'],
     },
     date_expired: {
       type: Number,
-      default: 0,
+      default: null,
     },
-    date_purchase: {
+    date_modified: {
       type: Number,
       default: new Date().getTime(),
     },
   },
   {
-    collection: 'items',
-  }
+    collection: 'inventory',
+  },
 );
 
-module.exports = mongoose.model('items', schema);
+module.exports = mongoose.model('inventory', schema);
