@@ -28,8 +28,9 @@ const schema = new Schema(
       type: Number,
       default: new Date().getTime(),
     },
-    inventory: [
+    consumables: [
       {
+        _id: false,
         _id_item: {
           type: Schema.Types.ObjectId,
           ref: 'inventory',

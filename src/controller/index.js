@@ -266,7 +266,7 @@ module.exports.push_transaction = (req, res) => {
 
 //products
 module.exports.peek_products = (req, res) => {
-  Thread.onFind(Products, null, null)
+  Thread.onFind(Products, null, {ref1: 'consumables._id_item'})
     .then(data => {
       Log.show(`/GET/products SUCCESS`);
       res.status(200).json({status: true, res: data});
@@ -278,14 +278,18 @@ module.exports.peek_products = (req, res) => {
     });
 };
 module.exports.push_products = (req, res) => {
-  const {name, based, hot_price, cold_price, date_modified} = req.body;
+  const {name, based, hot_price, cold_price, date_modified, consumables} =
+    req.body;
+
+  console.log(req.body);
 
   Thread.onCreate(Products, {
-    name: name,
-    based: based,
-    hot_price: hot_price,
-    cold_price: cold_price,
-    date_modified: date_modified,
+    name,
+    based,
+    hot_price,
+    cold_price,
+    date_modified,
+    consumables,
   })
     .then(data => {
       Log.show(`/POST/products SUCCESS: new created product "${name}"`);
@@ -298,7 +302,8 @@ module.exports.push_products = (req, res) => {
     });
 };
 module.exports.set_products = (req, res) => {
-  const {_id, name, based, hot_price, cold_price, date_modified} = req.body;
+  const {_id, name, based, hot_price, cold_price, date_modified, consumables} =
+    req.body;
 
   Thread.onUpdateOne(
     Products,
@@ -309,6 +314,7 @@ module.exports.set_products = (req, res) => {
       hot_price,
       cold_price,
       date_modified,
+      consumables,
     },
   )
     .then(data => {
