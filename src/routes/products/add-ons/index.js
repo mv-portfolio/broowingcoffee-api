@@ -4,7 +4,7 @@ const {
   push_add_ons,
   set_add_ons,
   pop_add_ons,
-} = require('../../../controller');
+} = require('../../../controller/add-ons');
 
 router.get('/', peek_add_ons);
 router.post('/push', push_add_ons);

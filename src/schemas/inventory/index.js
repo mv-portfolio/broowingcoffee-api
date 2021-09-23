@@ -39,4 +39,34 @@ const schema = new Schema(
   },
 );
 
+schema.statics.deduct = async function (consumes) {
+  try {
+    console.log('CONSUMES', consumes);
+    let temp_inventory = [];
+    consumes.forEach(consume => {
+      temp_inventory.push(consume._id_item);
+    });
+
+    const inventory = await this.find({_id: {$in: temp_inventory}});
+    inventory.forEach(item => {
+      let temp_item = item;
+      consumes.forEach(async consume => {
+        if (String(consume._id_item) === String(item._id)) {
+          temp_item.quantity = item.quantity - consume.consumed;
+          const update = await this.updateOne(
+            {_id: consume._id_item},
+            temp_item,
+          );
+          if (!update.ok) {
+            throw Error('Failed updating from Inventory');
+          }
+        }
+      });
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
 module.exports = mongoose.model('inventory', schema);

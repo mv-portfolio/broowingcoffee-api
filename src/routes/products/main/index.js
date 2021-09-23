@@ -4,7 +4,7 @@ const {
   push_products,
   set_products,
   pop_products,
-} = require('../../../controller');
+} = require('../../../controller/products');
 
 router.get('/', peek_products);
 router.post('/push', push_products);

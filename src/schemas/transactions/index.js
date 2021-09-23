@@ -23,6 +23,12 @@ const schema = new Schema(
           ref: 'products',
           required: [true, 'transaction must specify the product id'],
         },
+        addons: [
+          {
+            type: Schema.Types.ObjectId,
+            ref: 'add_ons',
+          },
+        ],
         type: {
           type: String,
           required: [true, 'transaction must specify the product type'],

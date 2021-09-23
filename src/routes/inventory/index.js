@@ -4,7 +4,7 @@ const {
   push_inventory,
   set_inventory,
   pop_inventory,
-} = require('../../controller');
+} = require('../../controller/inventory');
 
 router.get('/', peek_inventory);
 router.post('/push', push_inventory);
