@@ -74,8 +74,9 @@ module.exports.pop_inventory = (req, res) => {
     products => {
       let hasReference = false;
       products.forEach((product, index) => {
-        const consumable = product.consumables[index];
-        if (name === consumable._id_item.name) return (hasReference = true);
+        product.consumables.forEach(consumable => {
+          if (name === consumable._id_item.name) return (hasReference = true);
+        });
       });
 
       if (hasReference) {
@@ -84,7 +85,7 @@ module.exports.pop_inventory = (req, res) => {
         );
         res.status(400).json({
           status: false,
-          err: `Item ${name} has a reference from one of the Products`,
+          err: `Item ${name} has been referenced by one of the Products`,
         });
         return;
       }
