@@ -21,8 +21,6 @@ module.exports.push_products = (req, res) => {
   const {name, based, hot_price, cold_price, date_modified, consumables} =
     req.body;
 
-  console.log(req.body);
-
   Thread.onCreate(Products, {
     name,
     based,

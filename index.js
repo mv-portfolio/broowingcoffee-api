@@ -32,6 +32,7 @@ mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
+
 mongoose.connect(CONN_LOCAL, err => {
   if (err) return Log.show(err);
   Log.show('Successfully Connected MongoDB');

@@ -41,17 +41,24 @@ const schema = new Schema(
 
 schema.statics.deduct = async function (consumes) {
   try {
-    console.log('CONSUMES', consumes);
+
+    if(!consumes.length) return false;
+
     let temp_inventory = [];
     consumes.forEach(consume => {
       temp_inventory.push(consume._id_item);
     });
 
     const inventory = await this.find({_id: {$in: temp_inventory}});
+    let isNotEnough = false;
     inventory.forEach(item => {
       let temp_item = item;
       consumes.forEach(async consume => {
+        if (isNotEnough) return;
+
         if (String(consume._id_item) === String(item._id)) {
+          if (item.quantity < consume.consumed) return (isNotEnough = true);
+
           temp_item.quantity = item.quantity - consume.consumed;
           const update = await this.updateOne(
             {_id: consume._id_item},
@@ -63,6 +70,7 @@ schema.statics.deduct = async function (consumes) {
         }
       });
     });
+    if (isNotEnough) return false;
     return true;
   } catch (err) {
     return false;

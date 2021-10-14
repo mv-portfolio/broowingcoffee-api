@@ -17,6 +17,16 @@ module.exports = err => {
     }
     if (err.message.includes('name')) {
       errors.name = 'Name is already exist';
+
+      if (err.message.includes('products')) {
+        errors.name = 'Product Name is already exist';
+      }
+      if (err.message.includes('inventory')) {
+        errors.name = 'Inventory Name is already exist';
+      }
+      if (err.message.includes('add_ons')) {
+        errors.name = 'Add-on Name is already exist';
+      }
     }
   }
 
