@@ -138,9 +138,7 @@ module.exports.set_user = (req, res) => {
             error = {status: true, err: dataUpdate.err};
           }
         });
-        console.log('UPDATING');
         const salt = await bcrypt.genSalt();
-        //EROR exist it should ROLLBACK
         if (error.status) {
           const threads = [
             Thread.onUpdateOne(
@@ -172,7 +170,6 @@ module.exports.set_user = (req, res) => {
               password: await bcrypt.hash(password, salt),
             },
           ).then(() => {
-            console.log('SUCCESS');
             res.status(200).json({status: true, res: {user_id: _id}});
           });
         }

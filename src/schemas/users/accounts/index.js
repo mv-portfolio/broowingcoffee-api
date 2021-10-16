@@ -57,7 +57,6 @@ schema.statics.login = async function (username, password) {
 };
 
 schema.pre('save', async function () {
-  console.log('PRE-SAVE', this);
   const salt = await bcrypt.genSalt();
   this.password = await bcrypt.hash(this.password, salt);
 });
