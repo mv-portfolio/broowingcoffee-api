@@ -5,8 +5,6 @@ const Inventory = require('../schemas/inventory');
 
 const {arrayFind} = require('../utility/helper');
 
-const errorHanler = require('./errorHandler');
-
 //transactions
 module.exports.peek_transactions = (req, res) => {
   Thread.onFind(Transactions, null, {

@@ -12,9 +12,9 @@ module.exports.peek_products = (req, res) => {
       res.status(200).json({status: true, res: data});
     })
     .catch(err => {
-      const errors = errorHandler(err);
-      Log.show(`/GET/products FAILED: ${errors}`);
-      res.status(400).json({status: false, err: errors});
+      const errMessage = errorHandler(err);
+      Log.show(`/GET/products FAILED: ${errMessage}`);
+      res.status(400).json({status: false, err: errMessage});
     });
 };
 module.exports.push_products = (req, res) => {
@@ -34,9 +34,9 @@ module.exports.push_products = (req, res) => {
       res.status(200).json({status: true, res: data});
     })
     .catch(err => {
-      const errors = errorHandler(err);
-      Log.show(`/POST/products FAILED: ${errors}`);
-      res.status(400).json({status: false, err: errors});
+      const errMessage = errorHandler(err);
+      Log.show(`/POST/products FAILED: ${errMessage}`);
+      res.status(400).json({status: false, err: errMessage});
     });
 };
 module.exports.set_products = (req, res) => {
@@ -60,9 +60,9 @@ module.exports.set_products = (req, res) => {
       res.status(200).json({status: true, res: data});
     })
     .catch(err => {
-      const handledError = errorHandler(err);
-      Log.show(`/UPDATE/products FAILED: ${handledError}`);
-      res.status(400).json({status: false, err: handledError});
+      const errMessage = errorHandler(err);
+      Log.show(`/UPDATE/products FAILED: ${errMessage}`);
+      res.status(400).json({status: false, err: errMessage});
     });
 };
 module.exports.pop_products = (req, res) => {
@@ -73,8 +73,8 @@ module.exports.pop_products = (req, res) => {
       res.status(200).json({status: true, res: data});
     })
     .catch(err => {
-      const errors = errorHandler(err);
-      Log.show(`/GET/products FAILED: ${errors}`);
-      res.status(400).json({status: false, err: errors});
+      const errMessage = errorHandler(err);
+      Log.show(`/GET/products FAILED: ${errMessage}`);
+      res.status(400).json({status: false, err: errMessage});
     });
 };

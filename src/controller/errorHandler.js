@@ -2,7 +2,7 @@ module.exports = err => {
   let message = '';
   let errors = {firstname: '', lastname: '', username: '', email: '', name: ''};
 
-  if (err.message.includes('Validation failed')) {
+  if (err.message.includes('Validation failed') || err.message.includes('validation failed')) {
     Object.values(err.errors).forEach(({properties}) => {
       errors[properties.path] = properties.message;
     });
