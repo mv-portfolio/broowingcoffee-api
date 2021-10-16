@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {isEmail} = require('validator');
+const {isEmail, isPassword} = require('../../../utility/checker');
 const bcrypt = require('bcrypt');
 const Schema = mongoose.Schema;
 
@@ -21,12 +21,20 @@ const schema = new Schema(
       type: String,
       trim: true,
       lowercase: true,
-      validate: [isEmail, 'Please enter a valid Email'],
+      validate: {
+        validator: isEmail,
+        message: 'Please enter a valid Email',
+      },
       unique: [true, 'Email is already exist'],
       required: [true, 'Please provide your Email Address'],
     },
     password: {
       type: String,
+      validate: {
+        validator: isPassword,
+        message:
+          'Password must contains 6 characters, uppercase, lowercase letters, and numbers',
+      },
       required: [true, 'Please provide your Password'],
     },
   },
@@ -49,14 +57,9 @@ schema.statics.login = async function (username, password) {
 };
 
 schema.pre('save', async function () {
+  console.log('PRE-SAVE', this);
   const salt = await bcrypt.genSalt();
   this.password = await bcrypt.hash(this.password, salt);
-});
-
-schema.pre('updateOne', async function () {
-  let data = this.getUpdate();
-  const salt = await bcrypt.genSalt();
-  data.password = await bcrypt.hash(data.password, salt);
 });
 
 module.exports = mongoose.model('accounts', schema);

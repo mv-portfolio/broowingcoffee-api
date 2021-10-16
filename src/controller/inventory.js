@@ -13,9 +13,9 @@ module.exports.peek_inventory = (req, res) => {
       res.status(200).json({status: true, res: data});
     })
     .catch(err => {
-      const errors = errorHandler(err);
-      Log.show(`/GET/inventory FAILED: ${errors}`);
-      res.status(400).json({status: false, err: errors});
+      const errMessage = errorHandler(err);
+      Log.show(`/GET/inventory FAILED: ${errMessage}`);
+      res.status(400).json({status: false, err: errMessage});
     });
 };
 
@@ -35,9 +35,9 @@ module.exports.push_inventory = (req, res) => {
       res.status(200).json({status: true, res: data});
     })
     .catch(err => {
-      const errors = errorHandler(err);
-      Log.show(`/POST/inventory FAILED: ${errors}`);
-      res.status(400).json({status: false, err: errors});
+      const errMessage = errorHandler(err);
+      Log.show(`/POST/inventory FAILED: ${errMessage}`);
+      res.status(400).json({status: false, err: errMessage});
     });
 };
 
@@ -61,9 +61,9 @@ module.exports.set_inventory = (req, res) => {
       res.status(200).json({status: true, res: data});
     })
     .catch(err => {
-      const handledError = errorHandler(err);
-      Log.show(`/UPDATE/inventory FAILED: ${handledError}`);
-      res.status(400).json({status: false, err: handledError});
+      const errMessage = errorHandler(err);
+      Log.show(`/UPDATE/inventory FAILED: ${errMessage}`);
+      res.status(400).json({status: false, err: errMessage});
     });
 };
 
@@ -96,9 +96,9 @@ module.exports.pop_inventory = (req, res) => {
           res.status(200).json({status: true, res: data});
         })
         .catch(err => {
-          const errors = errorHandler(err);
-          Log.show(`/DELETE/inventory FAILED: ${errors}`);
-          res.status(400).json({status: false, err: errors});
+          const errMessage = errorHandler(err);
+          Log.show(`/DELETE/inventory FAILED: ${errMessage}`);
+          res.status(400).json({status: false, err: errMessage});
         });
     },
   );

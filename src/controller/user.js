@@ -6,7 +6,7 @@ const Informations = require('../schemas/users/informations');
 const Accounts = require('../schemas/users/accounts');
 const Configs = require('../schemas/users/configs');
 
-const errorHandler = require('./errorHandler')
+const errorHandler = require('./errorHandler');
 
 //users
 module.exports.peek_user = (req, res) => {
@@ -59,18 +59,18 @@ module.exports.push_user = (req, res) => {
         ];
         Thread.onMultiThread(threads);
 
-        const handledError = errorHandler(error.err);
-        Log.show(`/POST/user FAILED: ${handledError}`);
-        res.status(400).json({status: false, err: handledError});
+        const errMessage = errorHandler(error.err);
+        Log.show(`/POST/user FAILED: ${errMessage}`);
+        res.status(400).json({status: false, err: errMessage});
       } else {
         Log.show(`/POST/user SUCCESS: new created user "${username}"`);
         res.status(200).json({status: true, res: {user_id: information_id}});
       }
     })
     .catch(err => {
-      const handledError = errorHandler(err);
-      Log.show(`/POST/user FAILED: ${handledError}`);
-      res.status(400).json({status: false, err: handledError});
+      const errMessage = errorHandler(err);
+      Log.show(`/POST/user FAILED: ${errMessage}`);
+      res.status(400).json({status: false, err: errMessage});
     });
 };
 module.exports.set_user = (req, res) => {
@@ -90,6 +90,11 @@ module.exports.set_user = (req, res) => {
     {ref1: '_id_account', ref2: '_id_config'},
   )
     .then(async data => {
+      if (!data) {
+        res.status(400).json({status: false, err: 'User not found'});
+        return;
+      }
+
       const account = data._id_account;
       const config = data._id_config;
 
@@ -100,7 +105,7 @@ module.exports.set_user = (req, res) => {
 
       if (!isCorrectPassword) {
         res
-          .status(470)
+          .status(400)
           .json({status: false, err: 'Current Password is incorrect'});
         return;
       }
@@ -126,14 +131,16 @@ module.exports.set_user = (req, res) => {
         Thread.onUpdateOne(Configs, {_id: config._id}, {isAssessed: true}),
       ];
 
-      Thread.onMultiThread(threads).then(dataUpdates => {
+      Thread.onMultiThread(threads).then(async dataUpdates => {
         let error = {status: false, err: ''};
         dataUpdates.forEach(dataUpdate => {
           if (!dataUpdate.status) {
             error = {status: true, err: dataUpdate.err};
           }
         });
-
+        console.log('UPDATING');
+        const salt = await bcrypt.genSalt();
+        //EROR exist it should ROLLBACK
         if (error.status) {
           const threads = [
             Thread.onUpdateOne(
@@ -147,21 +154,32 @@ module.exports.set_user = (req, res) => {
               {
                 username: account.username,
                 email: account.email,
-                password: currentPassword,
+                password: await bcrypt.hash(currentPassword, salt),
               },
             ),
             Thread.onUpdateOne(Configs, {_id: config._id}, {isAssessed: false}),
           ];
-          Thread.onMultiThread(threads);
-          const errorHandler = errorHandler(error.err);
-          res.status(470).json({status: false, err: errorHandler});
+          Thread.onMultiThread(threads).then(() => {
+            console.log('FAILED');
+            const errMessage = errorHandler(error.err);
+            res.status(400).json({status: false, err: errMessage});
+          });
         } else {
-          res.status(200).json({status: true, res: {user_id: _id}});
+          Thread.onUpdateOne(
+            Accounts,
+            {_id: account._id},
+            {
+              password: await bcrypt.hash(password, salt),
+            },
+          ).then(() => {
+            console.log('SUCCESS');
+            res.status(200).json({status: true, res: {user_id: _id}});
+          });
         }
       });
     })
     .catch(err => {
-      res.status(470).json({status: false, err: err});
+      res.status(400).json({status: false, err: err.message});
     });
 };
 module.exports.pop_user = (req, res) => {
