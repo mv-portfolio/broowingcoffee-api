@@ -40,12 +40,12 @@ mongoose.connect(DATABASE, err => {
 
 // app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(express.json());
 app.use(
   cors({
     origin: [CLIENT, 'http://localhost:3000', 'http://192.168.43.68:3000'],
   }),
 );
-app.use(express.json());
 app.use(
   `/:secret_key1/api/service/app-authentication`,
   route_guard,
