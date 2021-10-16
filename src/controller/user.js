@@ -158,7 +158,6 @@ module.exports.set_user = (req, res) => {
             Thread.onUpdateOne(Configs, {_id: config._id}, {isAssessed: false}),
           ];
           Thread.onMultiThread(threads).then(() => {
-            console.log('FAILED');
             const errMessage = errorHandler(error.err);
             res.status(400).json({status: false, err: errMessage});
           });
