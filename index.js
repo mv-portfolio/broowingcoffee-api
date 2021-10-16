@@ -25,7 +25,7 @@ const addons = require('./src/routes/products/add-ons');
 const transactions = require('./src/routes/transaction');
 const inventory = require('./src/routes/inventory');
 
-const {PORT, CONN_LOCAL} = process.env;
+const {PORT, DATABASE, CLIENT} = process.env;
 
 mongoose.set('runValidators', true);
 mongoose.set('useNewUrlParser', true);
@@ -33,14 +33,14 @@ mongoose.set('useUnifiedTopology', true);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
 
-mongoose.connect(CONN_LOCAL, err => {
+mongoose.connect(DATABASE, err => {
   if (err) return Log.show(err);
   Log.show('Successfully Connected MongoDB');
 });
 
 // app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(cors());
+app.use(cors({origin: [CLIENT, 'http://localhost:3000']}));
 app.use(express.json());
 app.use(
   `/:secret_key1/api/service/app-authentication`,
