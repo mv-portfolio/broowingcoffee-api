@@ -71,6 +71,12 @@ app.use(
   users,
 );
 app.use(
+  `/:secret_key1/api/service/reset-password/`,
+  route_guard,
+  primary_auth_decoder,
+  reset_password_encoder,
+);
+app.use(
   `/:secret_key1/api/service/products/main`,
   route_guard,
   auth_guard,
@@ -85,22 +91,18 @@ app.use(
   addons,
 );
 app.use(
-  `/:secret_key1/api/service/reset-password/`,
+  `/:secret_key1/api/service/inventory`,
   route_guard,
+  auth_guard,
   primary_auth_decoder,
-  reset_password_encoder,
+  inventory,
 );
 app.use(
   `/:secret_key1/api/service/transactions`,
   route_guard,
+  auth_guard,
   primary_auth_decoder,
   transactions,
-);
-app.use(
-  `/:secret_key1/api/service/inventory`,
-  route_guard,
-  primary_auth_decoder,
-  inventory,
 );
 
 app.listen(PORT, () => {

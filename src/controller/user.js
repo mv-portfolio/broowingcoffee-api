@@ -91,7 +91,7 @@ module.exports.set_user = (req, res) => {
   )
     .then(async data => {
       if (!data) {
-        res.status(400).json({status: false, err: 'User not found'});
+        res.status(470).json({status: false, err: 'User not found'});
         return;
       }
 
@@ -105,7 +105,7 @@ module.exports.set_user = (req, res) => {
 
       if (!isCorrectPassword) {
         res
-          .status(400)
+          .status(470)
           .json({status: false, err: 'Current Password is incorrect'});
         return;
       }
@@ -159,7 +159,7 @@ module.exports.set_user = (req, res) => {
           ];
           Thread.onMultiThread(threads).then(() => {
             const errMessage = errorHandler(error.err);
-            res.status(400).json({status: false, err: errMessage});
+            res.status(470).json({status: false, err: errMessage});
           });
         } else {
           Thread.onUpdateOne(
@@ -175,7 +175,7 @@ module.exports.set_user = (req, res) => {
       });
     })
     .catch(err => {
-      res.status(400).json({status: false, err: err.message});
+      res.status(470).json({status: false, err: err.message});
     });
 };
 
