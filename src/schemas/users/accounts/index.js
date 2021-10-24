@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const {isEmail, isPassword} = require('../../../utility/checker');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt')
+
 const Schema = mongoose.Schema;
 
 const schema = new Schema(

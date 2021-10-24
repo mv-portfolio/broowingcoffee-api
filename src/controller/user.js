@@ -1,7 +1,9 @@
-const Log = require('../utility/Log');
-const Thread = require('../utility/Thread');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+
+const Log = require('../utility/Log');
+const Thread = require('../utility/Thread');
+
 const Informations = require('../schemas/users/informations');
 const Accounts = require('../schemas/users/accounts');
 const Configs = require('../schemas/users/configs');

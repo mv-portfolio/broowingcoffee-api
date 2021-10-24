@@ -1,15 +1,21 @@
 const Log = require('../../utility/Log');
 const Token = require('../../utility/Token');
-const {SECRET_KEY2} = process.env;
+
+const {SECRET_KEY2, SECRET_MESSAGE} = process.env;
 
 module.exports = (req, res, next) => {
-  const CLIENT_PRIMARY_TOKEN = req.get('primary-auth-token');
+  const primaryAuthToken = req.get('primary-auth-token');
   try {
-    const {message} = Token.verify(CLIENT_PRIMARY_TOKEN, SECRET_KEY2);
-    if (message === 'welcome-hacker ☺') {
+    if (!primaryAuthToken) {
+      throw new Error('Primary Authentication is invalid');
+    }
+
+    const {message} = Token.verify(primaryAuthToken, SECRET_KEY2);
+    if (message === SECRET_MESSAGE) {
       Log.show(`/POST/primary-authentication-decoder SUCCESS`);
       return next();
     }
+
     throw new Error('does not met the requirements');
   } catch (err) {
     Log.show(`/POST/primary-authentication-decoder FAILED: ${err.message}`);

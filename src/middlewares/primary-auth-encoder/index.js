@@ -1,11 +1,12 @@
 const Log = require('../../utility/Log');
 const Token = require('../../utility/Token');
-const {SECRET_KEY2} = process.env;
+
+const {SECRET_KEY2, SECRET_MESSAGE} = process.env;
 
 module.exports = (req, res, next) => {
   try {
     const primary_auth_token = Token.encode(
-      {message: 'welcome-hacker ☺'},
+      {message: SECRET_MESSAGE},
       SECRET_KEY2,
     );
     Log.show(

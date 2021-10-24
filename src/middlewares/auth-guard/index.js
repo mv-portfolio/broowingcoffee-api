@@ -7,14 +7,12 @@ module.exports = (req, res, next) => {
   try {
     const {_id} = Token.verify(secondary_auth_token, SECRET_KEY2);
     if (_id) {
-      return next();
+      next();
+      return;
     }
     throw new Error('Sorry, you are unauthorized user.');
   } catch (err) {
     Log.show(`/POST/auth-guard FAILED: ${err.message}`);
-    res.status(401).json({
-      status: false,
-      err: err.message,
-    });
+    res.status(401).json({status: false, err: err.message});
   }
 };

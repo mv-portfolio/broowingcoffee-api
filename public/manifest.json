@@ -1,15 +1,16 @@
 {
-  "short_name": "Broowing Coffee",
-  "name": "Create React App Sample",
+  "short_name": "BroowingCoffeeServer",
+  "name": "Broowing Coffee Server",
   "icons": [
     {
-      "src": "logo.png",
+      "src": "./assets/icons/logo.png",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#282627",
+  "background_color": "#fff",
+  "start_url": "./"
 }

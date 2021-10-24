@@ -1,9 +1,8 @@
+const Log = require('../utility/Log');
 const Thread = require('../utility/Thread');
 const Products = require('../schemas/products/main');
 const Transactions = require('../schemas/transactions');
 const Inventory = require('../schemas/inventory');
-
-const {arrayFind} = require('../utility/helper');
 
 //transactions
 module.exports.peek_transactions = (req, res) => {
@@ -27,11 +26,9 @@ module.exports.push_transaction = (req, res) => {
       _id_products.push(product._id_product);
       return;
     } else {
-      const isExist = arrayFind(
-        _id_products,
+      const isExist = _id_products.filter(
         _id_product => String(_id_product) === String(product._id_product),
       );
-
       if (!isExist) {
         _id_products.push(product._id_product);
       }
@@ -56,8 +53,7 @@ module.exports.push_transaction = (req, res) => {
               });
               return;
             }
-            const isExist = arrayFind(
-              temp_consumes,
+            const isExist = temp_consumes.filter(
               consume => consume._id_item === _id_item._id,
             );
             if (!isExist) {
@@ -83,6 +79,7 @@ module.exports.push_transaction = (req, res) => {
 
     const update = await Inventory.deduct(temp_consumes);
     if (!update) {
+      Log.show(`/POST/transaction FAILED`);
       res.status(400).json({status: false, err: 'Not Enough Inventory'});
       return;
     }
@@ -94,10 +91,11 @@ module.exports.push_transaction = (req, res) => {
       date_created,
     })
       .then(transaction => {
+        Log.show(`/POST/transaction SUCCESS`);
         res.status(200).json({status: true});
       })
       .catch(err => {
-        console.log(err);
+        Log.show(`/POST/transaction FAILED`);
         res.status(400).json(err);
       });
   });
