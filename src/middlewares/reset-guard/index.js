@@ -1,7 +1,7 @@
 const Log = require('../../utility/Log');
 const Token = require('../../utility/Token');
 
-const {SECRET_KEY2} = process.env;
+const {FORGOTPASS_SECRET_KEY} = process.env;
 
 module.exports = (req, res, next) => {
   const resetAuthToken = req.get('reset-auth-token');
@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
     if (tokenUsed.isTokenUsed(resetAuthToken)) {
       throw new Error('Reset Authentication already used');
     }
-    const {email} = Token.verify(resetAuthToken, SECRET_KEY2);
+    const {email} = Token.verify(resetAuthToken, FORGOTPASS_SECRET_KEY);
     if (email) {
       Log.show(`/GET/reset-guard SUCESS`);
       res.locals.email = email;

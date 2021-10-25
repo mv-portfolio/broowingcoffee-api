@@ -1,8 +1,13 @@
 const Log = require('../utility/Log');
+const Token = require('../utility/Token');
 const Thread = require('../utility/Thread');
+const NodeMailer = new (require('../utility/NodeMailer'))();
+
 const Products = require('../schemas/products/main');
 const Transactions = require('../schemas/transactions');
 const Inventory = require('../schemas/inventory');
+
+const {SERVER, RECEIPT_SECRET_KEY} = process.env;
 
 //transactions
 module.exports.peek_transactions = (req, res) => {
@@ -37,10 +42,17 @@ module.exports.push_transaction = (req, res) => {
 
   Thread.onFind(
     Products,
-    {_id: {$in: _id_products}},
-    {ref1: 'consumables._id_item'},
+    {
+      _id: {
+        $in: _id_products,
+      },
+    },
+    {
+      ref1: 'consumables._id_item',
+    },
   ).then(async resProducts => {
     let temp_consumes = [];
+
     resProducts.forEach(resProduct => {
       products.forEach(product => {
         if (String(product._id_product) === String(resProduct._id)) {
@@ -80,7 +92,10 @@ module.exports.push_transaction = (req, res) => {
     const update = await Inventory.deduct(temp_consumes);
     if (!update) {
       Log.show(`/POST/transaction FAILED`);
-      res.status(400).json({status: false, err: 'Not Enough Inventory'});
+      res.status(400).json({
+        status: false,
+        err: 'Not Enough Inventory',
+      });
       return;
     }
 
@@ -90,9 +105,27 @@ module.exports.push_transaction = (req, res) => {
       products,
       date_created,
     })
-      .then(transaction => {
+      .then(async transaction => {
         Log.show(`/POST/transaction SUCCESS`);
         res.status(200).json({status: true});
+
+        if (receiptTo) {
+          const token = Token.encode({transaction}, RECEIPT_SECRET_KEY, {
+            expiresIn: 60 * 60 * 24 * 30,
+          });
+          await NodeMailer.send({
+            to: receiptTo,
+            subject: 'BROOWING COFFEE | RECEIPT',
+            html: NodeMailer.template({
+              header: `Good day!`,
+              paragraph1: `We notice that you are requesting receipt for your latest transaction, if you want to proceed, click the button bellow.`,
+              paragraph2: `If you are not requesting for Receipt, you can safety ignore this email.`,
+              url: `${SERVER}/receipt/${token}/`,
+              buttonText: 'VIEW RECEIPT',
+            }),
+          });
+          Log.show(`Receipt has been successfully sent to ${receiptTo}`);
+        }
       })
       .catch(err => {
         Log.show(`/POST/transaction FAILED`);

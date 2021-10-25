@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/components/Text/.module.css"],"names":[],"mappings":"AAAA,WACE,QAAS,CACT,SAAU,CACV,gBAAiB,CACjB,kBACF","file":"9.93b5012c.chunk.css","sourcesContent":[".p {\r\n  margin: 0;\r\n  padding: 0;\r\n  font-size: 1.75vh;\r\n  font-family: 'Font';\r\n}\r\n"]}

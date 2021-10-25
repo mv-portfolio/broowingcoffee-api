@@ -45,8 +45,8 @@ const schema = new Schema(
     ],
   },
   {
-    collection: 'transaction',
+    collection: 'transactions',
   },
 );
 
-module.exports = mongoose.model('transaction', schema);
+module.exports = mongoose.model('transactions', schema);
