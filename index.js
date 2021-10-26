@@ -66,6 +66,7 @@ app.use(
     ],
   }),
 );
+
 app.use(
   `/:secret_key1/api/service/app-authentication`,
   route_guard,
