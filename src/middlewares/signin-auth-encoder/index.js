@@ -23,9 +23,7 @@ module.exports = async (req, res, next) => {
           const secondary_auth_token = Token.encode(
             {_id: user._id},
             SECRET_KEY2,
-            {
-              expiresIn: 60 * 15,
-            },
+            {expiresIn: 60 * 15},
           );
           if (secondary_auth_token) {
             Log.show(
