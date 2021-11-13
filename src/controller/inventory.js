@@ -44,6 +44,7 @@ module.exports.push_inventory = (req, res) => {
 module.exports.set_inventory = (req, res) => {
   const {name, cost, itemType, quantity, date_expired, date_modified} =
     req.body;
+
   Thread.onUpdateOne(
     Inventory,
     {name},
