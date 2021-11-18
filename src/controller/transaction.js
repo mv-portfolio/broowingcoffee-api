@@ -17,10 +17,10 @@ module.exports.peek_transactions = (req, res) => {
     ref2: 'products.addons',
   })
     .then(data => {
-      res.status(200).json(data);
+      res.status(200).json({status: true, res: data});
     })
     .catch(err => {
-      res.status(400).json(err);
+      res.status(400).json({status: false, err: err});
     });
 };
 module.exports.push_transaction = (req, res) => {
@@ -85,7 +85,16 @@ module.exports.push_transaction = (req, res) => {
     })
       .then(async transaction => {
         Log.show(`/POST/transaction SUCCESS`);
-        res.status(200).json({status: true});
+
+        const metaData = await Thread.onFindOne(
+          Transactions,
+          {_id: transaction._id},
+          {
+            ref1: 'products._id_product',
+            ref2: 'products.addons',
+          },
+        );
+        res.status(200).json({status: true, res: metaData});
 
         if (receiptTo) {
           const token = Token.encode({transaction}, RECEIPT_SECRET_KEY, {

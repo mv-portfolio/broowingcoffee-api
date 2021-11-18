@@ -3,10 +3,6 @@ const Schema = mongoose.Schema;
 
 const schema = new Schema(
   {
-    date_created: {
-      type: Number,
-      default: new Date().getTime(),
-    },
     discount: {
       type: Number,
       default: 0,
@@ -43,6 +39,10 @@ const schema = new Schema(
         },
       },
     ],
+    date_created: {
+      type: Number,
+      default: new Date().getTime(),
+    },
   },
   {
     collection: 'transactions',

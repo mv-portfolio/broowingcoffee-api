@@ -31,6 +31,7 @@ const products = require('./src/routes/products/main');
 const addons = require('./src/routes/products/add-ons');
 const transactions = require('./src/routes/transaction');
 const inventory = require('./src/routes/inventory');
+const reports = require('./src/routes/reports');
 
 const {PORT, DATABASE, CLIENT} = process.env;
 
@@ -144,6 +145,14 @@ app.use(
   route_guard,
   primary_auth_decoder,
   inventory,
+);
+//reports
+app.use(
+  `/:secret_key1/api/service/reports`,
+  route_guard,
+  auth_guard,
+  primary_auth_decoder,
+  reports,
 );
 
 app.use('*', express.static(path.join(__dirname, 'public')));
