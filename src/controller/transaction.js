@@ -97,6 +97,9 @@ module.exports.push_transaction = (req, res) => {
         res.status(200).json({status: true, res: metaData});
 
         if (receiptTo) {
+          /**
+           * create try catch if neccessary
+           */
           const token = Token.encode({transaction}, RECEIPT_SECRET_KEY, {
             expiresIn: 60 * 60 * 24 * 30,
           });

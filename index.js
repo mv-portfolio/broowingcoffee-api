@@ -24,6 +24,7 @@ const reset_password_encoder = require('./src/middlewares/reset-password-encoder
 const reset_password_decoder = require('./src/middlewares/reset-password-decoder');
 const reset_password_auth = require('./src/middlewares/reset-password-auth');
 const transaction_receipt = require('./src/middlewares/transaction-receipt');
+const report_bug = require('./src/middlewares/report-bug');
 
 //routes
 const users = require('./src/routes/users');
@@ -153,6 +154,13 @@ app.use(
   auth_guard,
   primary_auth_decoder,
   reports,
+);
+//report-bug
+app.use(
+  `/:secret_key1/api/service/report-bug`,
+  route_guard,
+  auth_guard,
+  report_bug,
 );
 
 app.use('*', express.static(path.join(__dirname, 'public')));

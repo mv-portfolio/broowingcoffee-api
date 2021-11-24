@@ -6,7 +6,19 @@ const Thread = require('../utility/Thread');
 const errorHandler = require('./errorHandler');
 
 module.exports.peek_reports = (req, res) => {
-  Thread.onFind(Reports, null, {ref1: '_id_account'})
+  const {date} = req.query;
+
+  const json = JSON.parse(date);
+  Thread.onFind(
+    Reports,
+    {
+      date_created: {
+        $gte: json.min,
+        $lt: json.max,
+      },
+    },
+    {ref1: '_id_account'},
+  )
     .then(data => {
       res.status(200).json({status: true, res: data});
     })
