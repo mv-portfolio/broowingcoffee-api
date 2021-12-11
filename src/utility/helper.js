@@ -6,6 +6,44 @@ const toName = val => {
   return val.substring(0, 1).toUpperCase() + val.substring(1).toLowerCase();
 };
 
+/** ---- own strategy ---- */
+const getMostPurchasableProduct = data => {
+  let tempData = [];
+  data.forEach(data => {
+    data.products.forEach(({_id_product}) => {
+      if (_id_product) {
+        const isPropExist = arrayFind(tempData, {
+          product: _id_product.name,
+        });
+
+        if (!isPropExist) {
+          tempData.push({
+            product: _id_product.name,
+            availed: 1,
+          });
+          return;
+        }
+
+        tempData = tempData.map(tempD => {
+          if (tempD.product === _id_product.name) {
+            return {
+              ...tempD,
+              availed: (tempD.availed += 1),
+            };
+          }
+          return tempD;
+        });
+      }
+    });
+  });
+  return tempData.sort(function (a, b) {
+    if (a.availed > b.availed) return -1;
+    if (a.availed < b.availed) return 1;
+    return 0;
+  });
+};
+/** ---- end ---- */
+
 const getProperties = obj => {
   let temp_data = [];
   Object.keys(obj).forEach((objKey, objKeyIdx) => {
@@ -158,5 +196,6 @@ module.exports = {
   getUsername,
   getProperties,
   getSpecificProperty,
+  getMostPurchasableProduct,
   toName,
 };

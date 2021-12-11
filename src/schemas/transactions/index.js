@@ -15,14 +15,12 @@ const schema = new Schema(
       {
         _id: false,
         _id_product: {
-          type: Schema.Types.ObjectId,
-          ref: 'products',
+          type: Object,
           required: [true, 'transaction must specify the product id'],
         },
         addons: [
           {
-            type: Schema.Types.ObjectId,
-            ref: 'add_ons',
+            type: Object,
           },
         ],
         type: {
