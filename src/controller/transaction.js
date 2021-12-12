@@ -14,19 +14,9 @@ const {SERVER, RECEIPT_SECRET_KEY} = process.env;
 //transactions
 module.exports.peek_transactions = (req, res) => {
   const {date} = req.query;
-  const dateFiltered = new Date(date);
- 
-  console.log({
-    clientTime: dateFiltered.toLocaleString(),
-    gte: `${new Date(
-      dateFiltered.getFullYear(),
-      dateFiltered.getMonth(),
-    ).toLocaleString()}`,
-    lt: `${new Date(
-      dateFiltered.getFullYear(),
-      dateFiltered.getMonth() + 1,
-    ).toLocaleString()}`,
-  });
+  const dateFiltered = new Date(parseInt(date));
+
+  console.log(date, dateFiltered.toLocaleString());
 
   Thread.onFind(
     Transactions,
