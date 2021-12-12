@@ -13,24 +13,15 @@ const {SERVER, RECEIPT_SECRET_KEY} = process.env;
 
 //transactions
 module.exports.peek_transactions = (req, res) => {
-  const {date} = req.query;
-  const dateFiltered = new Date(parseInt(date));
-
-  console.log(date, `${dateFiltered.getFullYear()}/${dateFiltered.getMonth()}`);
+  const {date_start, date_end} = req.query;
 
   Thread.onFind(
     Transactions,
-    date
+    date_start && date_end
       ? {
           date_created: {
-            $gte: new Date(
-              dateFiltered.getFullYear(),
-              dateFiltered.getMonth(),
-            ).getTime(),
-            $lt: new Date(
-              dateFiltered.getFullYear(),
-              dateFiltered.getMonth() + 1,
-            ).getTime(),
+            $gte: date_start,
+            $lt: date_end,
           },
         }
       : null,
