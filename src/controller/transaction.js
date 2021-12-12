@@ -16,7 +16,16 @@ module.exports.peek_transactions = (req, res) => {
   const {date} = req.query;
   const dateFiltered = new Date(date);
 
-  console.log(dateFiltered);
+  console.log({
+    gte: `${new Date(
+      dateFiltered.getFullYear(),
+      dateFiltered.getMonth(),
+    ).toLocaleString()}`,
+    lt: `${new Date(
+      dateFiltered.getFullYear(),
+      dateFiltered.getMonth() + 1,
+    ).toLocaleString()}`,
+  });
 
   Thread.onFind(
     Transactions,
@@ -37,6 +46,7 @@ module.exports.peek_transactions = (req, res) => {
     null,
   )
     .then(data => {
+      console.log('response length', data.length);
       res.status(200).json({
         status: true,
         res: {transactions: data, topList: getMostPurchasableProduct(data)},
