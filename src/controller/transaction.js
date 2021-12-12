@@ -16,6 +16,8 @@ module.exports.peek_transactions = (req, res) => {
   const {date} = req.query;
   const dateFiltered = new Date(date);
 
+  console.log(dateFiltered);
+
   Thread.onFind(
     Transactions,
     date
