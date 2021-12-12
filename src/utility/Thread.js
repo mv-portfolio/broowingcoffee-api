@@ -18,16 +18,16 @@ module.exports.onMultiThread = threads => {
   );
 };
 
-//chunks
-module.exports.onCreate = (chunk, payload) => {
+//schemas
+module.exports.onCreate = (schema, payload) => {
   return new Promise(async (res, rej) => {
-    await chunk
+    await schema
       .create(payload)
       .then(data => res(data))
       .catch(err => rej(err));
   });
 };
-module.exports.onFind = (chunk, selector, refs) => {
+module.exports.onFind = (schema, selector, refs) => {
   let references = {ref1: '', ref2: ''};
   if (refs) {
     references = {
@@ -36,17 +36,17 @@ module.exports.onFind = (chunk, selector, refs) => {
     };
   }
   return new Promise((res, rej) => {
-    chunk
+    schema
       .find(selector)
       .populate(references.ref1)
       .populate(references.ref2)
-      .exec((err, chunk) => {
+      .exec((err, schema) => {
         if (err) rej(err);
-        res(chunk);
+        res(schema);
       });
   });
 };
-module.exports.onFindOne = (chunk, selector, refs) => {
+module.exports.onFindOne = (schema, selector, refs) => {
   let references = {ref1: '', ref2: ''};
   if (refs) {
     references = {
@@ -55,27 +55,27 @@ module.exports.onFindOne = (chunk, selector, refs) => {
     };
   }
   return new Promise((res, rej) => {
-    chunk
+    schema
       .findOne(selector)
       .populate(references.ref1)
       .populate(references.ref2)
-      .exec((err, chunk) => {
+      .exec((err, schema) => {
         if (err) rej(err);
-        res(chunk);
+        res(schema);
       });
   });
 };
-module.exports.onDelete = (chunk, selector) => {
+module.exports.onDelete = (schema, selector) => {
   return new Promise(async (res, rej) => {
-    await chunk
+    await schema
       .deleteOne(selector)
       .then(data => res(data))
       .catch(err => rej(err));
   });
 };
-module.exports.onUpdateOne = (chunk, selector, payload) => {
+module.exports.onUpdateOne = (schema, selector, payload) => {
   return new Promise((res, rej) => {
-    chunk
+    schema
       .updateOne(selector, payload)
       .then(data => res(data))
       .catch(err => rej(err));

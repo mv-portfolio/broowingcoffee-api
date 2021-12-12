@@ -6,6 +6,44 @@ const toName = val => {
   return val.substring(0, 1).toUpperCase() + val.substring(1).toLowerCase();
 };
 
+/** ---- own strategy ---- */
+const getMostPurchasableProduct = data => {
+  let tempData = [];
+  data.forEach(data => {
+    data.products.forEach(({_id_product}) => {
+      if (_id_product) {
+        const isPropExist = arrayFind(tempData, {
+          product: _id_product.name,
+        });
+
+        if (!isPropExist) {
+          tempData.push({
+            product: _id_product.name,
+            availed: 1,
+          });
+          return;
+        }
+
+        tempData = tempData.map(tempD => {
+          if (tempD.product === _id_product.name) {
+            return {
+              ...tempD,
+              availed: (tempD.availed += 1),
+            };
+          }
+          return tempD;
+        });
+      }
+    });
+  });
+  return tempData.sort(function (a, b) {
+    if (a.availed > b.availed) return -1;
+    if (a.availed < b.availed) return 1;
+    return 0;
+  });
+};
+/** ---- end ---- */
+
 const getProperties = obj => {
   let temp_data = [];
   Object.keys(obj).forEach((objKey, objKeyIdx) => {
@@ -19,6 +57,75 @@ const getProperties = obj => {
     });
   });
   return temp_data;
+};
+const getSpecificProperty = (keys, payload) => {
+  let redundantFields = [];
+  let temp_keys = keys;
+  let object = {};
+  const hasRedundantProps = payload => {
+    const fields = Object.keys(payload);
+    Object.values(payload).forEach(payload => {
+      if (typeof payload === 'object' && payload !== null) {
+        const payloadObjectFields = Object.keys(payload);
+        fields.forEach(field => {
+          payloadObjectFields.forEach(payloadObjectField => {
+            if (field === payloadObjectField) {
+              if (redundantFields.length === 0) {
+                return redundantFields.push(field);
+              }
+              let isExist = false;
+              redundantFields.forEach(redundantField => {
+                if (redundantField === payloadObjectField) {
+                  isExist = true;
+                }
+              });
+              if (!isExist) {
+                return redundantFields.push(field);
+              }
+              return;
+            }
+          });
+        });
+      }
+    });
+    return redundantFields;
+  };
+  const ObjectValues = Object.values(payload);
+  const propsRedundancies = hasRedundantProps(payload);
+  if (!Array.isArray(temp_keys)) {
+    temp_keys = Object.keys(temp_keys);
+  }
+  temp_keys.forEach(field => {
+    Object.keys(payload).forEach((payloadField, payloadFieldIdx) => {
+      if (field === payloadField) {
+        object[payloadField] = ObjectValues[payloadFieldIdx];
+      }
+      //2nd Level
+      if (typeof ObjectValues[payloadFieldIdx] === 'object') {
+        const payloadObjectFields = ObjectValues[payloadFieldIdx];
+        if (payloadObjectFields) {
+          const payloadObjectValues = Object.values(payloadObjectFields);
+          Object.keys(payloadObjectFields).forEach(
+            (payloadObjectField, payloadObjectFieldIdx) => {
+              if (field === payloadObjectField) {
+                let isRedundantProp = false;
+                propsRedundancies.forEach(redundancyProp => {
+                  if (redundancyProp === payloadObjectField) {
+                    return (isRedundantProp = true);
+                  }
+                });
+                if (!isRedundantProp) {
+                  object[payloadObjectField] =
+                    payloadObjectValues[payloadObjectFieldIdx];
+                }
+              }
+            },
+          );
+        }
+      }
+    });
+  });
+  return object;
 };
 const arrayFind = (array = [], filter) => {
   if (!filter) return array;
@@ -87,5 +194,8 @@ module.exports = {
   arrayFilter,
   arrayUpdate,
   getUsername,
+  getProperties,
+  getSpecificProperty,
+  getMostPurchasableProduct,
   toName,
 };

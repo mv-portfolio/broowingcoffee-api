@@ -5,7 +5,8 @@ const errorHandler = require('./errorHandler');
 
 //add-ons
 module.exports.peek_add_ons = (req, res) => {
-  Thread.onFind(Addons, null, null)
+  const {name, _id} = req.query;
+  Thread.onFind(Addons, {$or: name || _id ? [{name}, {_id}] : [{__v: 0}]}, null)
     .then(data => {
       Log.show(`/GET/add-ons SUCCESS`);
       res.status(200).json({status: true, res: data});

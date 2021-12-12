@@ -3,10 +3,6 @@ const Schema = mongoose.Schema;
 
 const schema = new Schema(
   {
-    date_created: {
-      type: Number,
-      default: new Date().getTime(),
-    },
     discount: {
       type: Number,
       default: 0,
@@ -19,14 +15,12 @@ const schema = new Schema(
       {
         _id: false,
         _id_product: {
-          type: Schema.Types.ObjectId,
-          ref: 'products',
+          type: Object,
           required: [true, 'transaction must specify the product id'],
         },
         addons: [
           {
-            type: Schema.Types.ObjectId,
-            ref: 'add_ons',
+            type: Object,
           },
         ],
         type: {
@@ -43,6 +37,10 @@ const schema = new Schema(
         },
       },
     ],
+    date_created: {
+      type: Number,
+      default: new Date().getTime(),
+    },
   },
   {
     collection: 'transactions',

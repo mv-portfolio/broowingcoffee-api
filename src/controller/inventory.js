@@ -7,7 +7,12 @@ const mongoose = require('mongoose');
 
 //inventory
 module.exports.peek_inventory = (req, res) => {
-  Thread.onFind(Inventory, null, null)
+  const {name, _id} = req.query;
+  Thread.onFind(
+    Inventory,
+    {$or: name || _id ? [{name}, {_id}] : [{__v: 0}]},
+    null,
+  )
     .then(data => {
       Log.show(`/GET/inventory SUCCESS`);
       res.status(200).json({status: true, res: data});

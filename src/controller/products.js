@@ -6,7 +6,12 @@ const errorHandler = require('./errorHandler');
 
 //products
 module.exports.peek_products = (req, res) => {
-  Thread.onFind(Products, null, {ref1: 'consumables._id_item'})
+  const {name, _id} = req.query;
+  Thread.onFind(
+    Products,
+    {$or: name || _id ? [{name}, {_id}] : [{__v: 0}]},
+    {ref1: 'consumables._id_item'},
+  )
     .then(data => {
       Log.show(`/GET/products SUCCESS`);
       res.status(200).json({status: true, res: data});

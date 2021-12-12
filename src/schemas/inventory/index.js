@@ -41,12 +41,11 @@ const schema = new Schema(
 
 schema.statics.deduct = async function (consumes) {
   try {
-
-    if(!consumes.length) return false;
+    if (!consumes.length) return false;
 
     let temp_inventory = [];
     consumes.forEach(consume => {
-      temp_inventory.push(consume._id_item);
+      temp_inventory.push(consume._id);
     });
 
     const inventory = await this.find({_id: {$in: temp_inventory}});
@@ -55,15 +54,11 @@ schema.statics.deduct = async function (consumes) {
       let temp_item = item;
       consumes.forEach(async consume => {
         if (isNotEnough) return;
-
-        if (String(consume._id_item) === String(item._id)) {
+        const consume_id = String(consume._id);
+        if (consume_id === String(item._id)) {
           if (item.quantity < consume.consumed) return (isNotEnough = true);
-
           temp_item.quantity = item.quantity - consume.consumed;
-          const update = await this.updateOne(
-            {_id: consume._id_item},
-            temp_item,
-          );
+          const update = await this.updateOne({_id: consume_id}, temp_item);
           if (!update.ok) {
             throw Error('Failed updating from Inventory');
           }
