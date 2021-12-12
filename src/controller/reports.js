@@ -43,15 +43,18 @@ module.exports.push_report = (req, res) => {
         date_created,
       })
         .then(data => {
+          Log.show(`/POST/reports SUCCESS`);
           res.status(200).json({status: true, res: data});
         })
         .catch(err => {
           const error = errorHandler(err);
+          Log.show(`/POST/reports FAILED`, error);
           res.status(400).json({status: false, err: error});
         });
     })
     .catch(err => {
       const error = errorHandler(err);
+      Log.show(`/POST/reports FAILED`, error);
       res.status(400).json({status: false, err: error});
     });
 };
