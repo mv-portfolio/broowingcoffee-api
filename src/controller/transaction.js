@@ -17,6 +17,7 @@ module.exports.peek_transactions = (req, res) => {
   const dateFiltered = new Date(date);
 
   console.log({
+    current: new Date().toLocaleString(),
     gte: `${new Date(
       dateFiltered.getFullYear(),
       dateFiltered.getMonth(),
