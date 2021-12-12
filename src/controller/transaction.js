@@ -16,7 +16,7 @@ module.exports.peek_transactions = (req, res) => {
   const {date} = req.query;
   const dateFiltered = new Date(parseInt(date));
 
-  console.log(date, dateFiltered.toLocaleString());
+  console.log(date, `${dateFiltered.getFullYear()}/${dateFiltered.getMonth()}`);
 
   Thread.onFind(
     Transactions,
