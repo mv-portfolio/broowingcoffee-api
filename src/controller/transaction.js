@@ -120,15 +120,9 @@ module.exports.push_transaction = (req, res) => {
     })
       .then(async transaction => {
         Log.show(`/POST/transaction SUCCESS`);
-
-        const metaData = await Thread.onFindOne(
-          Transactions,
-          {_id: transaction._id},
-          {
-            ref1: 'products._id_product',
-            ref2: 'products.addons',
-          },
-        );
+        const metaData = await Thread.onFindOne(Transactions, {
+          _id: transaction._id,
+        });
         res.status(200).json({status: true, res: metaData});
 
         if (receiptTo) {
