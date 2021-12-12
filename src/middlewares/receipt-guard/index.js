@@ -8,7 +8,6 @@ module.exports = (req, res, next) => {
   try {
     const payload = Token.verify(receiptAuthToken, RECEIPT_SECRET_KEY);
     if (payload) {
-      Log.show(`/GET/receipt-guard SUCESS`);
       res.locals.payload = payload.transaction;
       next();
     }

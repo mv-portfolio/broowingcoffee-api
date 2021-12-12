@@ -12,8 +12,6 @@ module.exports = async (req, res, next) => {
     if (!transaction) {
       throw new Error('Transaction not found');
     }
-
-    Log.show(`/GET/transaction-receipt SUCESS`);
     res.status(200).json({status: true, res: transaction});
   } catch (err) {
     Log.show(`/GET/transaction-receipt FAILED: ${err.message}`);

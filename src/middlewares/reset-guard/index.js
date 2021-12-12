@@ -13,7 +13,6 @@ module.exports = (req, res, next) => {
     }
     const {email} = Token.verify(resetAuthToken, FORGOTPASS_SECRET_KEY);
     if (email) {
-      Log.show(`/GET/reset-guard SUCESS`);
       res.locals.email = email;
       res.locals.token = resetAuthToken;
       next();

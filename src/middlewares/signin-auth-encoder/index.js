@@ -26,9 +26,6 @@ module.exports = async (req, res, next) => {
             {expiresIn: 60 * 15},
           );
           if (secondary_auth_token) {
-            Log.show(
-              `/POST/signin-authentication-encoder SUCCESS: ${username} has been login`,
-            );
             res.status(200).json({
               status: true,
               res: {

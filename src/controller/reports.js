@@ -1,6 +1,7 @@
 const Reports = require('../schemas/reports');
 const Accounts = require('../schemas/users/accounts');
 
+const Log = require('../utility/Log');
 const Thread = require('../utility/Thread');
 
 const errorHandler = require('./errorHandler');
@@ -20,10 +21,12 @@ module.exports.peek_reports = (req, res) => {
     {ref1: '_id_account'},
   )
     .then(data => {
+      Log.show(`/GET/reports SUCCESS`);
       res.status(200).json({status: true, res: data});
     })
     .catch(err => {
       const error = errorHandler(err);
+      Log.show(`/GET/reports FAILED`, error);
       err.status(400).json({status: false, error});
     });
 };

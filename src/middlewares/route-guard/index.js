@@ -5,7 +5,6 @@ module.exports = (req, res, next) => {
   const {secret_key1} = req.params;
   try {
     if (secret_key1 === SECRET_KEY1) {
-      Log.show(`/GET/route-guard SUCESS`);
       next();
       return;
     }

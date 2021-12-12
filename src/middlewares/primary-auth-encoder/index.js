@@ -9,9 +9,6 @@ module.exports = (req, res, next) => {
       {message: SECRET_MESSAGE},
       SECRET_KEY2,
     );
-    Log.show(
-      `/POST/primary-authentication-encoder SUCCESS: new Active Application`,
-    );
     res.status(200).json({
       status: true,
       res: {

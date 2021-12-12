@@ -8,6 +8,7 @@ const Products = require('../schemas/products/main');
 const Addons = require('../schemas/products/add-ons');
 const Transactions = require('../schemas/transactions');
 const Inventory = require('../schemas/inventory');
+const errorHandler = require('./errorHandler');
 
 const {SERVER, RECEIPT_SECRET_KEY} = process.env;
 
@@ -28,17 +29,19 @@ module.exports.peek_transactions = (req, res) => {
     null,
   )
     .then(data => {
-      console.log('response length', data.length);
+      Log.show(`/GET/transaction SUCCESS`);
       res.status(200).json({
         status: true,
         res: {transactions: data, topList: getMostPurchasableProduct(data)},
       });
     })
     .catch(err => {
-      console.log(err);
-      res.status(400).json({status: false, err: err});
+      const error = errorHandler(err);
+      Log.show(`/GET/transaction FAILED`, error);
+      res.status(400).json({status: false, err: error});
     });
 };
+
 module.exports.push_transaction = (req, res) => {
   const {receiptTo, discount, products, date_created} = req.body;
 
@@ -98,7 +101,7 @@ module.exports.push_transaction = (req, res) => {
 
     const update = await Inventory.deduct(temp_consumes);
     if (!update) {
-      Log.show(`/POST/transaction FAILED`);
+      Log.show(`/POST/transaction FAILED`, 'Not Enough Item from Inventory');
       res.status(400).json({
         status: false,
         err: 'Not Enough Item from Inventory',

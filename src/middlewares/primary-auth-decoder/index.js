@@ -12,7 +12,6 @@ module.exports = (req, res, next) => {
 
     const {message} = Token.verify(primaryAuthToken, SECRET_KEY2);
     if (message === SECRET_MESSAGE) {
-      Log.show(`/POST/primary-authentication-decoder SUCCESS`);
       return next();
     }
 

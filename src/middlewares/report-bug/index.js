@@ -9,8 +9,6 @@ module.exports = async (req, res) => {
       subject: `BUG REPORT | ${title}`,
       text: `${issue}\n\nReported by: ${from}`,
     });
-
-    Log.show(`/POST/bug-report SUCCESS`);
     res.status(200).json({
       status: true,
       res: 'Thank you for sending report, We will pay attention for that issue as soon as possible.',

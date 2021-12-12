@@ -28,7 +28,6 @@ module.exports = async (req, res, next) => {
           });
           return;
         }
-        Log.show(`/POST/signin-authentication-decoder SUCCESS`);
         res.status(200).json({
           status: true,
           res: {

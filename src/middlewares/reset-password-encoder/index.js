@@ -31,7 +31,6 @@ module.exports = async (req, res, next) => {
         }),
       });
     }
-    Log.show(`/POST/reset-password SUCESS`);
     res.status(200).json({status: true});
   } catch (err) {
     Log.show(`/POST/reset-password FALED: ${err.message}`);

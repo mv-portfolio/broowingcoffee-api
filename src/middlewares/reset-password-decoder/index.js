@@ -23,7 +23,6 @@ module.exports = async (req, res, next) => {
       {email},
       {password: await bcrypt.hash(newPassword, salt)},
     );
-    Log.show(`/POST/reset-password-decoder SUCCESS`);
     res.status(200).json({status: true});
   } catch (err) {
     Log.show(`/POST/reset-password-decoder FAILED`);
