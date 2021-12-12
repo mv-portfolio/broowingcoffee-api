@@ -1,0 +1,2 @@
+(this["webpackJsonpcapstone-web-server"]=this["webpackJsonpcapstone-web-server"]||[]).push([[19],{84:function(e,n,t){"use strict";t.r(n),t.d(n,"default",(function(){return u}));var o=t(19),r=t(77),s=t(107),c=t.n(s),a=t(1),i=["font","name","size","color"];function u(e){var n=e.font,t=e.name,s=e.size,u=e.color,b=Object(r.a)(e,i);return Object(a.jsx)(c.a,Object(o.a)({font:n,name:t,size:s,color:u},b))}}}]);
+//# sourceMappingURL=19.75adeae2.chunk.js.map

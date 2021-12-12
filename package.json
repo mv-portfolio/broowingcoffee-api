@@ -1,8 +1,12 @@
 {
   "name": "broowingcoffee-server",
   "version": "0.1.4",
-  "description": "",
   "main": "index.js",
+  "author": {
+    "name": "Marvin Petate",
+    "email": "petatemarvin26@gmail.com",
+    "url": "https://petatemarvin26.github.io/"
+  },
   "engines": {
     "node": "14.18.1"
   },
@@ -24,6 +28,5 @@
     "start": "node index"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC"
 }

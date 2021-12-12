@@ -1,0 +1,40 @@
+@font-face {
+  font-family: 'Font';
+  src: local('Montserrat'), url('./assets//fonts/Montserrat-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Font-Bold';
+  src: local('VanillaExtractRegular'),
+    url('./assets//fonts/VanillaExtractRegular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: AntDesign;
+  font-weight: bold;
+  src: local('AntDesign'), url('./assets//fonts/AntDesign.ttf') format('truetype');
+}
+@font-face {
+  font-family: Feather;
+  font-weight: bold;
+  src: local('Feather'), url('./assets//fonts/Feather.ttf') format('truetype');
+}
+
+:root {
+  --ACCENT-COLOR: #f7a35b;
+  --ACCENT-COLOR2: #f75b5b;
+  --ACCENT-COLOR3: #87ff83;
+  --BACKGROUND-COLOR: #282627;
+  --BACKGROUND-COLOR2: #2e2c2d;
+  --BACKGROUND-COLOR3: #383637;
+  /* COMMON COLORS */
+  --BLACK: #000;
+  --WHITE: #fff;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--BACKGROUND-COLOR);
+}
