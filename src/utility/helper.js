@@ -1,3 +1,5 @@
+const {toFormatName} = require('./formatter');
+
 const getUsername = text => {
   let lastIndex = text.indexOf('@');
   return text.substring(0, lastIndex);
@@ -7,25 +9,25 @@ const toName = val => {
 };
 
 /** ---- own strategy ---- */
-const getMostPurchasableProduct = data => {
+const getPurchasedProducts = data => {
   let tempData = [];
   data.forEach(data => {
     data.products.forEach(({_id_product}) => {
       if (_id_product) {
         const isPropExist = arrayFind(tempData, {
-          product: _id_product.name,
+          product: toFormatName(_id_product.name),
         });
 
         if (!isPropExist) {
           tempData.push({
-            product: _id_product.name,
+            product: toFormatName(_id_product.name),
             availed: 1,
           });
           return;
         }
 
         tempData = tempData.map(tempD => {
-          if (tempD.product === _id_product.name) {
+          if (tempD.product === toFormatName(_id_product.name)) {
             return {
               ...tempD,
               availed: (tempD.availed += 1),
@@ -196,6 +198,6 @@ module.exports = {
   getUsername,
   getProperties,
   getSpecificProperty,
-  getMostPurchasableProduct,
+  getPurchasedProducts,
   toName,
 };

@@ -2,7 +2,7 @@ const Log = require('../utility/Log');
 const Token = require('../utility/Token');
 const Thread = require('../utility/Thread');
 const NodeMailer = new (require('../utility/NodeMailer'))();
-const {arrayFind, getMostPurchasableProduct} = require('../utility/helper');
+const {arrayFind, getPurchasedProducts} = require('../utility/helper');
 
 const Products = require('../schemas/products/main');
 const Addons = require('../schemas/products/add-ons');
@@ -32,7 +32,7 @@ module.exports.peek_transactions = (req, res) => {
       Log.show(`/GET/transaction SUCCESS`);
       res.status(200).json({
         status: true,
-        res: {transactions: data, topList: getMostPurchasableProduct(data)},
+        res: {transactions: data, topList: getPurchasedProducts(data)},
       });
     })
     .catch(err => {
