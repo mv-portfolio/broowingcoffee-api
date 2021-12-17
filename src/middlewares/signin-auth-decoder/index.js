@@ -20,6 +20,7 @@ module.exports = async (req, res, next) => {
     )
       .then(user => {
         if (!user) {
+          Log.show(`/POST/signin-authentication-decoder FAILED`);
           res.status(401).json({
             status: false,
             res: {
@@ -28,6 +29,7 @@ module.exports = async (req, res, next) => {
           });
           return;
         }
+        Log.show(`/POST/signin-authentication-decoder SUCCESS`);
         res.status(200).json({
           status: true,
           res: {

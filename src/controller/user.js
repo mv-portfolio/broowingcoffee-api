@@ -113,22 +113,11 @@ module.exports.set_user = (req, res) => {
       }
 
       const threads = [
-        Thread.onUpdateOne(
-          Informations,
-          {_id: _id},
-          {
-            firstname,
-            lastname,
-          },
-        ),
+        Thread.onUpdateOne(Informations, {_id: _id}, {firstname, lastname}),
         Thread.onUpdateOne(
           Accounts,
           {_id: account._id},
-          {
-            username,
-            email,
-            password,
-          },
+          {username, email, password},
         ),
         Thread.onUpdateOne(Configs, {_id: config._id}, {isAssessed: true}),
       ];
@@ -161,22 +150,24 @@ module.exports.set_user = (req, res) => {
           ];
           Thread.onMultiThread(threads).then(() => {
             const errMessage = errorHandler(error.err);
+            Log.show(`/PUT/user FAILED: ${errMessage}`);
             res.status(470).json({status: false, err: errMessage});
           });
         } else {
           Thread.onUpdateOne(
             Accounts,
             {_id: account._id},
-            {
-              password: await bcrypt.hash(password, salt),
-            },
+            {password: await bcrypt.hash(password, salt)},
           ).then(() => {
+            Log.show(`/PUT/user SUCCESS: ${email}`);
             res.status(200).json({status: true, res: {user_id: _id}});
           });
         }
       });
     })
     .catch(err => {
+      const errMessage = errorHandler(err);
+      Log.show(`/PUT/user FAILED: ${errMessage}`);
       res.status(470).json({status: false, err: err.message});
     });
 };
